@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import Button from 'react-bootstrap/Button'
+
 import {
     Avalanche,
     BinTools,
@@ -114,6 +115,13 @@ async function CreatingAnAsset() {
     MintingTheAsset();
 }
 
+function DisplayEnviroment() {
+    //console.log(`Nombre ${process.env.REACT_APP_NOMBRE}`);
+    console.log("REACT_APP_AVA_IP: ", process.env.REACT_APP_AVA_IP);
+    console.log("REACT_APP_ASSET_ID: ", process.env.REACT_APP_ASSET_ID);
+    console.log("REACT_APP_DROP_SIZE_X: ", process.env.REACT_APP_DROP_SIZE_X);
+}
+
 function App() {
     return (
         <div>
@@ -123,6 +131,7 @@ function App() {
                 </p>
             </header>
             <body className="App-body">
+                <Button variant="primary" onClick={DisplayEnviroment}>Display Environment</Button>{' '}
                 <Button variant="primary" onClick={ManagingKeys}>Create Addresses</Button>{' '}
                 <Button variant="primary" onClick={CreatingAnAsset}>Minting An Asset</Button>{' '}
             </body>
