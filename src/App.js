@@ -97,7 +97,7 @@ async function MintingTheAsset() {
     // Make an unsigned Create Asset transaction from the data compiled earlier
     let unsigned = await xchain.buildCreateAssetTx(utxos, addresses, initialState, name, symbol, denomination);
 
-    let signed = xchain.keyChain().signTx(unsigned); //returns a Tx class
+    let signed = xchain.signTx(unsigned); //returns a Tx class
 
     // using the Tx class
     let txid = await xchain.issueTx(signed); //returns an Avalanche serialized string for the TxID
@@ -105,6 +105,7 @@ async function MintingTheAsset() {
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
     let status = await xchain.getTxStatus(txid); 
 
+    console.log("Status: ", status)
     console.log("Asset ID: ", txid)
 }
 
