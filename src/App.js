@@ -113,41 +113,6 @@ async function CreatingAnAsset() {
     MintingTheAsset();
 }
 
-// --- Creating X-Chain key pairs ---
-// let newAddress1 = myKeychain.makeKey(); //returns a Buffer for the address
-// let newAddress2 = myKeychain.makeKey();
-// let newAddress3 = myKeychain.makeKey();
-
-// --- Working with keychains ---
-// let addresses = myKeychain.getAddresses(); //returns an array of Buffers for the addresses
-// let addressStrings = myKeychain.getAddressStrings(); //returns an array of strings for the addresses
-// let exists = myKeychain.hasKey(addresses[0]); //returns true if the address is managed
-// let keypair = myKeychain.getKey(addresses[0]); //returns the keypair class
-
-// console.log("Address 1: ", addressStrings[0])
-// console.log("Address 2: ", addressStrings[1])
-// console.log("Address 3: ", addressStrings[2])
-
-/*
-*  Creating An Asset
-*/
-
-// --- Describe the new asset ---
-// let name = "Kikicoin the smart coin";
-// let symbol = "KIKI";
-// Where is the decimal point indicate what 1 asset is and where fractional assets begin
-// Ex: 1 AVAX is denomination 9, so the smallest unit of AVAX is nanoAVAX (nAVAX) at 10^-9 AVAX
-// let denomination = 9;
-
-// --- Creating the initial state ---
-// addresses = myKeychain.getAddresses();
-
-// Create outputs for the asset's initial state
-// let secpOutput1 = new SecpOutput(new BN(400), addresses, new BN(400), 1);
-// let secpOutput2 = new SecpOutput(new BN(500), [addresses[1]], new BN(400), 1);
-// let secpOutput3 = new SecpOutput(new BN(600), [addresses[1], addresses[2]], new BN(400), 1);
-
-
 function App() {
     return (
         <div>
