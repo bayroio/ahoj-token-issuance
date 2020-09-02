@@ -53,6 +53,8 @@ async function CreatingXchainKeypairs() {
     console.log("Address 1: ", addressStrings[0])
     console.log("Address 2: ", addressStrings[1])
     console.log("Address 3: ", addressStrings[2])
+
+    
 }
 
 async function ManagingKeys() {
