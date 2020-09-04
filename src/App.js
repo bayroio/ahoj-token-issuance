@@ -1,66 +1,45 @@
 import React from 'react';
 import './App.css';
 import Button from 'react-bootstrap/Button'
+import {xchain, myKeychain, BN, CONFIG} from './server/ava'
+import xfaucet from './server/xfaucet'
+//import {Buffer} from 'avalanche'
+import {InitialStates, SecpOutput} from 'avalanche/dist/apis/avm'
 
-import {
-    Avalanche,
-    BinTools,
-    Buffer,
-    BN
-  } from 'avalanche'
+//let newAddress1, newAddress2, newAddress3;
+//let addressStrings;
 
-import {
-    InitialStates,
-    SecpOutput
-  } from 'avalanche/dist/apis/avm'
+async function CreatingAndFundingAddresses() {
+    console.log("--- Creating Addresses ---")
 
-let bintools = BinTools.getInstance();
-
-let ava;
-let xchain;
-let myKeychain;
-let newAddress1, newAddress2, newAddress3;
-
-let keypair;
-let addressStrings;
-
-/// The keychain is accessed through the AVM API and can be referenced directly or through a reference variable.
-/// This exposes the instance of the class AVM Keychain which is created when the AVM API is created.
-/// At present, this supports secp256k1 curve for ECDSA key pairs.
-async function AccessingTheKeychain() {
-    console.log("--- Accessing Keychain @ X-Chain ---")
-    //let mynetworkID = 12345; //default is 3, we want to override that for our local network
-    //let myBlockchainID = "rrEWX7gc7D9mwcdrdBxBTdqh1a7WDVsMuadhTZgyXfFcRz45L"; // The AVM blockchainID on this network
-    ava = new Avalanche("localhost", 9650, "http") //, mynetworkID, myBlockchainID);
-    xchain = ava.XChain(); //returns a reference to the AVM API used by Avalanche.js
-
-    // --- Accessing the keychain ---
-    myKeychain = xchain.keyChain();
-
-    console.log("Avalanche instance: ", ava)
-    console.log("X-Chain reference: ", xchain)
-    console.log("myKeyChain: ", myKeychain)
-}
-
-async function CreatingXchainKeypairs() {
-    console.log("--- Creating X-Chain key pairs ---")
-    newAddress1 = myKeychain.makeKey();
+    /*newAddress1 = myKeychain.makeKey();
     newAddress2 = myKeychain.makeKey();
-    newAddress3 = myKeychain.makeKey();
+    newAddress3 = myKeychain.makeKey();*/
+    myKeychain.makeKey();
+    myKeychain.makeKey();
+    myKeychain.makeKey();
 
     let addressStrings = myKeychain.getAddressStrings();
 
-    console.log("Address 1: ", addressStrings[0])
-    console.log("Address 2: ", addressStrings[1])
-    console.log("Address 3: ", addressStrings[2])
+    let balance = await xchain.getBalance(addressStrings[0], CONFIG.ASSET_ID);
+    let balanceVal = new BN(balance.balance);
 
+    console.log("Address 1: ", addressStrings[0], " balance: ", balance, " balanceVal: ", balanceVal)
+    console.log("Address 2: ", addressStrings[1], " balance: ", balance, " balanceVal: ", balanceVal)
+    console.log("Address 3: ", addressStrings[2], " balance: ", balance, " balanceVal: ", balanceVal)
+    console.log("Address 4: ", addressStrings[3], " balance: ", balance, " balanceVal: ", balanceVal)
+
+    xfaucet.sendTokens(addressStrings[1]).then(txid => {
+                    if(txid.status){
+                        console.log("TX Id: ", txid);
+                    }else{
+                        console.log("Success: ", txid);
+                    }
+                }).catch(err => {
+                    console.error("error: ", err);
+                });
     
-}
-
-async function ManagingKeys() {
-    console.log("=== Managing Keys ===")
-    AccessingTheKeychain();
-    CreatingXchainKeypairs();
+    
 }
 
 async function MintingTheAsset() {
@@ -117,12 +96,12 @@ async function CreatingAnAsset() {
     MintingTheAsset();
 }
 
-function DisplayEnviroment() {
+/*function DisplayEnviroment() {
     //console.log(`Nombre ${process.env.REACT_APP_NOMBRE}`);
     console.log("REACT_APP_AVA_IP: ", process.env.REACT_APP_AVA_IP);
     console.log("REACT_APP_ASSET_ID: ", process.env.REACT_APP_ASSET_ID);
     console.log("REACT_APP_DROP_SIZE_X: ", process.env.REACT_APP_DROP_SIZE_X);
-}
+}*/
 
 function App() {
     return (
@@ -132,11 +111,8 @@ function App() {
                     Ahoj Token Issuance
                 </p>
             </header>
-            <body className="App-body">
-                <Button variant="primary" onClick={DisplayEnviroment}>Display Environment</Button>{' '}
-                <Button variant="primary" onClick={ManagingKeys}>Create Addresses</Button>{' '}
-                <Button variant="primary" onClick={CreatingAnAsset}>Minting An Asset</Button>{' '}
-            </body>
+            <Button variant="primary" onClick={CreatingAndFundingAddresses}>Creating Addresses</Button>{' '}
+            <Button variant="primary" onClick={CreatingAnAsset}>Minting An Asset</Button>{' '}
         </div>
   );
 }
