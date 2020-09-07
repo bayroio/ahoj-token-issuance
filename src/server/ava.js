@@ -2,7 +2,7 @@ const avalanche = require("avalanche");
 const BN = require('bn.js');
 
 const AVA_IP = process.env.REACT_APP_AVA_IP || "localhost";
-const AVA_PORT = process.env.REACT_APP_AVA_PORT || 9650;
+const AVA_PORT = process.env.REACT_APP_AVA_PORT || "9650";
 const AVA_PROTOCOL = process.env.REACT_APP_AVA_PROTOCOL || "http";
 const AVA_NETWORK_ID = process.env.REACT_APP_AVA_NETWORK_ID || "4";
 
@@ -12,11 +12,11 @@ const PK_X =  process.env.REACT_APP_PRIVATE_KEY_X; // The private key that holds
 const PK_C =  process.env.REACT_APP_PRIVATE_KEY_C; // The private key that holds the given assets to supply the faucet
 const ASSET_ID = process.env.REACT_APP_ASSET_ID; // Which asset is being sent from the faucet
 const DROP_SIZE =  process.env.REACT_APP_DROP_SIZE_X || 1000; // how much of the given asset to transfer from the faucet
-const AVAX_FEE =  process.env.REACT_APP_AVAX_FEE || 0; // how much of the given asset to transfer from the faucet
+const AVAX_FEE =  process.env.REACT_APP_AVAX_FEE || 1000000; // how much of the given asset to transfer from the faucet
 
 let bintools = avalanche.BinTools.getInstance();
 
-let ava = new avalanche.Avalanche(AVA_IP, AVA_PORT, AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID);
+let ava = new avalanche.Avalanche(AVA_IP, parseInt(AVA_PORT), AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID);
 let xchain = ava.XChain();
     xchain.setFee(new BN(AVAX_FEE));
 

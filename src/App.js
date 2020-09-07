@@ -46,16 +46,25 @@ async function ManagingXChainKeys(){
 }
 
 async function CreateAsset() {
-//let myNetworkID = 4; //default is 3, we want to override that for our local network
-//let myBlockchainID = "jnUjZSRt16TcRnZzmh5aMhavwVHz3zBrSN8GfFMTQkzUnoBxC"; // The XChain blockchainID on this network
-let avax = new Avalanche("localhost", 9650, "http") //, myNetworkID, myBlockchainID);
-let xchain = avax.XChain();
+    //let myNetworkID = 4; //default is 3, we want to override that for our local network
+    //let myBlockchainID = "jnUjZSRt16TcRnZzmh5aMhavwVHz3zBrSN8GfFMTQkzUnoBxC"; // The XChain blockchainID on this network
+    //let AVAX = new Avalanche("localhost", 9650, "http") //, myNetworkID, myBlockchainID);
+    //let XCHAIN = AVAX.XChain();
+    //XCHAIN.setFee(new BN(0));
+    /*console.log("avax: ", ava)
+    console.log("xchain: ", xchain)
+    console.log("AVAX: ", AVAX)
+    console.log("XCHAIN: ", XCHAIN)*/
 
     // Name our new coin and give it a symbol
     //let name = "TEcoin the coin of Team Entropy";
     //let symbol = "TEEN";
-    let name = "MXCoin";
-    let symbol = "MXMX";
+
+    let name = "FourTwenty Token of The Waldos";
+    let symbol = "FOTW";
+
+    //let name = "Psycho Token";
+    //let symbol = "SYKO";
 
     // Where is the decimal point indicate what 1 asset is and where fractional assets begin
     // Ex: 1 AVAX is denomination 9, so the smallest unit of AVAX is nanoAVAX (nAVAX) at 10^-9 AVAX
@@ -89,8 +98,8 @@ let xchain = avax.XChain();
     let unsigned = await xchain.buildCreateAssetTx(utxos, addresses, initialState, name, symbol, denomination);
     console.log("unsigned: ", unsigned);
 
-    let signed = unsigned.sign(myKeychain)
-    //let signed = xchain.signTx(unsigned); //returns a Tx class
+    //let signed = unsigned.sign(myKeychain)
+    let signed = xchain.signTx(unsigned); //returns a Tx class
     console.log("signed: ", signed);
     console.log("tx signed: ", signed.toString());
 
