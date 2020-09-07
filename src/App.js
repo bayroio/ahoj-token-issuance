@@ -1,66 +1,152 @@
 import React from 'react';
 import './App.css';
 import Button from 'react-bootstrap/Button'
+import {ava, xchain, myKeychain, BN, CONFIG} from './server/ava'
+import xfaucet from './server/xfaucet'
+import {Avalanche, Buffer} from 'avalanche'
+import {InitialStates, SecpOutput} from 'avalanche/dist/apis/avm'
 
-import {
-    Avalanche,
-    BinTools,
-    Buffer,
-    BN
-  } from 'avalanche'
+//let newAddress1, newAddress2, newAddress3;
+//let addressStrings;
 
-import {
-    InitialStates,
-    SecpOutput
-  } from 'avalanche/dist/apis/avm'
+async function ManagingXChainKeys(){
+    let newAddress1 = myKeychain.makeKey(); 
+    console.log("newAddress1: ", newAddress1)
 
-let bintools = BinTools.getInstance();
+    let newAddress2 = myKeychain.makeKey(); 
+    console.log("newAddress2: ", newAddress2)
 
-let ava;
-let xchain;
-let myKeychain;
-let newAddress1, newAddress2, newAddress3;
+    let addresses = myKeychain.getAddresses(); //returns an array of Buffers for the addresses
+    let addressStrings = myKeychain.getAddressStrings(); 
+    console.log("addressStrings: ", addressStrings)
 
-let keypair;
-let addressStrings;
+    let exists = myKeychain.hasKey(addresses[0]);
+    console.log("exists: ", exists)
+    let keypair = myKeychain.getKey(addresses[0])
+    console.log("keypair: ", keypair)
+    
+    let pubk = keypair.getPublicKey(); //returns Buffer
+    let pubkstr = keypair.getPublicKeyString(); //returns a cb58 encoded string
+    console.log("pubk: ", pubk)
+    console.log("pubkstr: ", pubkstr)
 
-/// The keychain is accessed through the AVM API and can be referenced directly or through a reference variable.
-/// This exposes the instance of the class AVM Keychain which is created when the AVM API is created.
-/// At present, this supports secp256k1 curve for ECDSA key pairs.
-async function AccessingTheKeychain() {
-    console.log("--- Accessing Keychain @ X-Chain ---")
-    //let mynetworkID = 12345; //default is 3, we want to override that for our local network
-    //let myBlockchainID = "rrEWX7gc7D9mwcdrdBxBTdqh1a7WDVsMuadhTZgyXfFcRz45L"; // The AVM blockchainID on this network
-    ava = new Avalanche("localhost", 9650, "http") //, mynetworkID, myBlockchainID);
-    xchain = ava.XChain(); //returns a reference to the AVM API used by Avalanche.js
+    let privk = keypair.getPrivateKey(); //returns Buffer
+    let privkstr = keypair.getPrivateKeyString(); //returns a cb58 encoded string
+    console.log("privk: ", privk)
+    console.log("privkstr: ", privkstr)
 
-    // --- Accessing the keychain ---
-    myKeychain = xchain.keyChain();
+    let message = Buffer.from("Wubalubadubdub");
+    let signature = keypair.sign(message); //returns a Buffer with the signature
+    console.log("signature: ", signature)
 
-    console.log("Avalanche instance: ", ava)
-    console.log("X-Chain reference: ", xchain)
-    console.log("myKeyChain: ", myKeychain)
+    let signerPubk = keypair.recover(message, signature);
+    console.log("signerPubk: ", signerPubk)
+    let isValid = keypair.verify(message, signature); //returns a boolean
+    console.log("isValid: ", isValid)
 }
 
-async function CreatingXchainKeypairs() {
-    console.log("--- Creating X-Chain key pairs ---")
-    newAddress1 = myKeychain.makeKey();
-    newAddress2 = myKeychain.makeKey();
-    newAddress3 = myKeychain.makeKey();
+async function CreateAsset() {
+    //let myNetworkID = 4; //default is 3, we want to override that for our local network
+    //let myBlockchainID = "jnUjZSRt16TcRnZzmh5aMhavwVHz3zBrSN8GfFMTQkzUnoBxC"; // The XChain blockchainID on this network
+    //let AVAX = new Avalanche("localhost", 9650, "http") //, myNetworkID, myBlockchainID);
+    //let XCHAIN = AVAX.XChain();
+    //XCHAIN.setFee(new BN(0));
+    /*console.log("avax: ", ava)
+    console.log("xchain: ", xchain)
+    console.log("AVAX: ", AVAX)
+    console.log("XCHAIN: ", XCHAIN)*/
+
+    // Name our new coin and give it a symbol
+    //let name = "TEcoin the coin of Team Entropy";
+    //let symbol = "TEEN";
+
+    let name = "FourTwenty Token of The Waldos";
+    let symbol = "FOTW";
+
+    //let name = "Psycho Token";
+    //let symbol = "SYKO";
+
+    // Where is the decimal point indicate what 1 asset is and where fractional assets begin
+    // Ex: 1 AVAX is denomination 9, so the smallest unit of AVAX is nanoAVAX (nAVAX) at 10^-9 AVAX
+    let denomination = 9;
+
+    myKeychain.makeKey();
+    myKeychain.makeKey();
+
+    let addresses = myKeychain.getAddresses();
+    let addressStrings = myKeychain.getAddressStrings(); 
+    console.log("addressStrings: ", addressStrings)
+    let keypair = myKeychain.getKey(addresses[0])
+    console.log("keypair: ", keypair)
+
+    // Create outputs for the asset's initial state
+    let secpOutput1 = new SecpOutput(new BN(400), addresses, new BN(400), 1);
+    let secpOutput2 = new SecpOutput(new BN(500), [addresses[1]], new BN(400), 1);
+    let secpOutput3 = new SecpOutput(new BN(600), [addresses[1], addresses[2]], new BN(400), 1);
+
+    // Populate the initialStates with the outputs
+    let initialState = new InitialStates();
+    initialState.addOutput(secpOutput1);
+    initialState.addOutput(secpOutput2);
+    initialState.addOutput(secpOutput3);
+
+    // Fetch the UTXOSet for our addresses
+    let utxos = await xchain.getUTXOs(addresses);
+    console.log("utoxs: ", utxos);
+
+    // Make an unsigned Create Asset transaction from the data compiled earlier
+    let unsigned = await xchain.buildCreateAssetTx(utxos, addresses, initialState, name, symbol, denomination);
+    console.log("unsigned: ", unsigned);
+
+    //let signed = unsigned.sign(myKeychain)
+    let signed = xchain.signTx(unsigned); //returns a Tx class
+    console.log("signed: ", signed);
+    console.log("tx signed: ", signed.toString());
+
+    // using the Tx class
+    let txid = await xchain.issueTx(signed); //returns an Avalanche serialized string for the TxID
+    // using the base-58 representation
+    //let txid = await xchain.issueTx(signed.toString()); //returns an Avalanche serialized string for the TxID
+    // using the transaction Buffer
+    //let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
+
+    // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
+    let status = await xchain.getTxStatus(txid); 
+
+    console.log("Status: ", status)
+    console.log("Asset ID: ", txid)
+}
+
+async function CreatingAndFundingAddresses() {
+    console.log("--- Creating Address ---")
+
+    myKeychain.makeKey();
+    myKeychain.makeKey();
+    myKeychain.makeKey();
 
     let addressStrings = myKeychain.getAddressStrings();
 
-    console.log("Address 1: ", addressStrings[0])
-    console.log("Address 2: ", addressStrings[1])
-    console.log("Address 3: ", addressStrings[2])
+    let balance1 = await xchain.getBalance(addressStrings[0], CONFIG.ASSET_ID);
+    //let balance1Val = new BN(balance1.balance);
+    let balance2 = await xchain.getBalance(addressStrings[1], CONFIG.ASSET_ID);
+    let balance3 = await xchain.getBalance(addressStrings[2], CONFIG.ASSET_ID);
+    let balance4 = await xchain.getBalance(addressStrings[3], CONFIG.ASSET_ID);
 
-    
-}
+    console.log("Address 1 (faucet): ", addressStrings[0], " balance: ", balance1.balance)
+    console.log("Address 2: ", addressStrings[1], " balance: ", balance2.balance)
+    console.log("Address 3: ", addressStrings[2], " balance: ", balance3.balance)
+    console.log("Address 4: ", addressStrings[3], " balance: ", balance4.balance)
 
-async function ManagingKeys() {
-    console.log("=== Managing Keys ===")
-    AccessingTheKeychain();
-    CreatingXchainKeypairs();
+    /*xfaucet.sendTokens(addressStrings[1]).then(txid => {
+                    if(txid.status){
+                        console.log("TX Id: ", txid);
+                    }else{
+                        console.log("Success: ", txid);
+                    }
+                }).catch(err => {
+                    console.error("error: ", err);
+                });
+    */    
 }
 
 async function MintingTheAsset() {
@@ -82,7 +168,7 @@ async function MintingTheAsset() {
     // Create outputs for the asset's initial state
     let secpOutput1 = new SecpOutput(new BN(400), addresses, new BN(400), 1);
     let secpOutput2 = new SecpOutput(new BN(500), [addresses[1]], new BN(400), 1);
-    let secpOutput3 = new SecpOutput(new BN(600), [addresses[1], addresses[2]], new BN(400), 1);
+    let secpOutput3 = new SecpOutput(new BN(600), [addresses[1], addresses[2], addresses[3]], new BN(400), 1);
 
     console.log("secpOutput1: ", secpOutput1)
     console.log("secpOutput2: ", secpOutput2)
@@ -112,17 +198,12 @@ async function MintingTheAsset() {
     console.log("Asset ID: ", txid)
 }
 
-async function CreatingAnAsset() {
-    console.log("=== Creating An Asset ===")
-    MintingTheAsset();
-}
-
-function DisplayEnviroment() {
+/*function DisplayEnviroment() {
     //console.log(`Nombre ${process.env.REACT_APP_NOMBRE}`);
     console.log("REACT_APP_AVA_IP: ", process.env.REACT_APP_AVA_IP);
     console.log("REACT_APP_ASSET_ID: ", process.env.REACT_APP_ASSET_ID);
     console.log("REACT_APP_DROP_SIZE_X: ", process.env.REACT_APP_DROP_SIZE_X);
-}
+}*/
 
 function App() {
     return (
@@ -132,11 +213,13 @@ function App() {
                     Ahoj Token Issuance
                 </p>
             </header>
-            <body className="App-body">
-                <Button variant="primary" onClick={DisplayEnviroment}>Display Environment</Button>{' '}
-                <Button variant="primary" onClick={ManagingKeys}>Create Addresses</Button>{' '}
-                <Button variant="primary" onClick={CreatingAnAsset}>Minting An Asset</Button>{' '}
-            </body>
+            <Button variant="primary" onClick={ManagingXChainKeys}>Managing X-Chain Keys</Button>{' '}
+            <br></br><br></br>
+            <Button variant="primary" onClick={CreateAsset}>Creating Kiki Asset</Button>{' '}
+            <br></br><br></br>
+            <Button variant="primary" onClick={CreatingAndFundingAddresses}>Create Asset</Button>{' '}
+            <br></br><br></br>
+            <Button variant="primary" onClick={MintingTheAsset}>Minting An Asset</Button>{' '}
         </div>
   );
 }
