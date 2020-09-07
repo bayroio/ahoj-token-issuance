@@ -4,4 +4,4 @@
 This solution can be used to create and trade a variable-cap, fungible asset. You can specify which sets of addresses may mint more units. Also you can mint more units of an asset. You can check address balances and transfer shares.
 
 # Faucet address
-X-everest1r2fy8xjmx72zxl9ky0xxq9agy5h0tk945ps08w
+X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u

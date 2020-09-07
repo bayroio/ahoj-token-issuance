@@ -1,13 +1,12 @@
 const avalanche = require("avalanche");
 const BN = require('bn.js');
 
-
 const AVA_IP = process.env.REACT_APP_AVA_IP || "localhost";
 const AVA_PORT = process.env.REACT_APP_AVA_PORT || 9650;
-const AVA_PROTOCOL = process.env.REACT_APP_AVA_PROTOCOL || "https";
-const AVA_NETWORK_ID = process.env.REACT_APP_AVA_NETWORK_ID || "12345";
+const AVA_PROTOCOL = process.env.REACT_APP_AVA_PROTOCOL || "http";
+const AVA_NETWORK_ID = process.env.REACT_APP_AVA_NETWORK_ID || "4";
 
-let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || 'avm';
+let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || 'jnUjZSRt16TcRnZzmh5aMhavwVHz3zBrSN8GfFMTQkzUnoBxC';
 
 const PK_X =  process.env.REACT_APP_PRIVATE_KEY_X; // The private key that holds the given assets to supply the faucet
 const PK_C =  process.env.REACT_APP_PRIVATE_KEY_C; // The private key that holds the given assets to supply the faucet
@@ -24,7 +23,7 @@ let xchain = ava.XChain();
 
 let myKeychain = xchain.keyChain();
 let keypair = myKeychain.importKey(PK_X);
-const FAUCET_ADDRESS = keypair.getAddressString();  //X-everest1r2fy8xjmx72zxl9ky0xxq9agy5h0tk945ps08w
+const FAUCET_ADDRESS = keypair.getAddressString();  //X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u
 
 
 const CONFIG = {

@@ -5,10 +5,10 @@ const BN = require('bn.js');
 
 const xfaucet = {
     sendTokens: async function(addr){
-        let myAddresses = [CONFIG.FAUCET_ADDRESS];
-        console.log(myAddresses);
-        let utxos = await xchain.getUTXOs(myAddresses);
-        console.log(utxos.getAllUTXOs());
+        let faucetAddresses = [CONFIG.FAUCET_ADDRESS];
+        console.log("Faucet Addresses: ", faucetAddresses);
+        let utxos = await xchain.getUTXOs(faucetAddresses);
+        console.log("All UTXO: ", utxos.getAllUTXOs());
         let sendAmount = new BN(CONFIG.DROP_SIZE);
 
 
@@ -23,22 +23,29 @@ const xfaucet = {
                 message: 'Insufficient funds to create the transaction. Please file an issues on the repo: https://github.com/ava-labs/faucet-site'
             }
         }
-        console.log(xchain.getBlockchainID());
+
+        console.log("Blockchain ID: ", xchain.getBlockchainID());
         console.log("sendAmount: ", sendAmount);
         console.log("CONFIG.ASSET_ID: ", CONFIG.ASSET_ID);
-        console.log("[addr]: ", [addr]);
-        console.log("myAddresses: ", myAddresses);
-        let unsigned_tx = await xchain.buildBaseTx(utxos, sendAmount, CONFIG.ASSET_ID,[addr], myAddresses, myAddresses ).catch(err => {
-            console.log(err);
+        console.log("To Address: ", [addr]);
+        console.log("From Addresses - Faucet: ", faucetAddresses);
+        let unsigned_tx = await xchain.buildBaseTx(utxos, sendAmount, CONFIG.ASSET_ID,[addr], faucetAddresses, faucetAddresses ).catch(err => {
+            console.log("buildBaseTx error: ", err);
         });
+
+        console.log("unsigned_tx status: ", unsigned_tx.status);
 
         // Meaning an error occurred
         if(unsigned_tx.status){
             return unsigned_tx;
         }
 
-        let signed_tx = xchain.signTx(unsigned_tx);
-        let txid = await xchain.issueTx(signed_tx);
+        let signed_tx = await xchain.signTx(unsigned_tx);
+        console.log("signed_tx: ", signed_tx.toString());
+        
+        let txid = await xchain.issueTx(signed_tx).catch(err => {
+            console.log("issueTx error: ", err);
+        });
 
         console.log(`(X) Sent a drop with tx id:  ${txid} to address: ${addr}`);
         return txid;
