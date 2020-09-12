@@ -1,13 +1,46 @@
-import React from 'react';
+/*
+<thead>
+    <tr>
+        <th>#</th>
+        <th>Asset ID</th>
+        <th>Name</th>
+        <th>Symbol</th>
+        <th>Total Supply</th>
+        <th><Button variant="outline-info">Reload</Button></th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <td>1</td>
+        <td>2wR5jFEHeECTQLbWWQr1fhJuj4FDNjGviCBRTamvGTqayVBDrC</td>
+        <td>TEcoin the coin of Team Entropy</td>
+        <td>TEEN</td>
+        <td>0.00</td>
+        <td>
+            <Button variant="outline-success" onClick={AssetAirdrop}>Send</Button>
+        </td>
+    </tr>
+        <td>2</td>
+        <td>2J8rV9wPmsJJXHHzLf9aUiqWRC5LmHdN3dfuvNUvaYnoSr8pVe</td>
+        <td>Psycho Token</td>
+        <td>SIKO</td>
+        <td>0.00</td>
+        <td>
+            <Button variant="outline-success" onClick={AssetAirdrop}>Send</Button>
+        </td>
+</tbody>
+*/
+import React, {Component}  from 'react';
 import Button from 'react-bootstrap/Button'
-import Navbar from 'react-bootstrap/Navbar'
-import NavDropdown from 'react-bootstrap/NavDropdown'
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
-import Table from 'react-bootstrap/Table'
-import Nav from 'react-bootstrap/Nav'
 import {xchain, myKeychain, BN} from './server/ava'
 import {InitialStates, SecpOutput} from 'avalanche/dist/apis/avm'
+
+import Table4Assets from './Table4Assets';
+import MenuBar from './MenuBar';
+import Form from './Form';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 async function CreateAsset() {
@@ -138,77 +171,52 @@ async function CheckBalance() {
     console.log("REACT_APP_DROP_SIZE_X: ", process.env.REACT_APP_DROP_SIZE_X);
 }*/
 
-function App() {
-    return (
-        <div>
-            <Navbar fixed="top" collapseOnSelect expand="lg" bg="dark" variant="dark">
-                <Navbar.Brand href="#creatingasset">Ahoj.AssetIssuance</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="mr-auto">
-                        
-                    </Nav>
-                    <Nav>
-                        <NavDropdown title="X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u" id="avax-address">
-                            <NavDropdown.Item href="#">X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">+ new address</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">Access / Disconnect</NavDropdown.Item>
-                        </NavDropdown>
-                        <NavDropdown title="Everest" id="select-network">
-                            <NavDropdown.Item href="#">Everest Testnet</NavDropdown.Item>
-                            <NavDropdown.Item href="#">Localhost</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">+ custom network</NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
-            <br></br><br></br><br></br>
-            <main>
+class App extends Component {
+    constructor(props) {
+        super(props);
+        
+        this.initialState = {
+            assets: [],
+            avaxAddress: 'X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u'
+        };
+
+        this.state = this.initialState;
+    }
+    /*state = {
+        assets: [],
+        avaxAddress: "X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u"
+    };*/
+
+    SendAsset = index => {
+        const { assets } = this.state;
+    }
+
+    handleSubmit = asset => {
+        this.setState({assets: [...this.state.assets, asset]});
+    }
+
+    render() {
+        const { assets, avaxAddress } = this.state;
+
+        return (
+            <div>
+                <MenuBar avaxAddress={avaxAddress} />
+                <br></br><br></br><br></br>
                 <div id="creatingasset">
                     <Container>
                         <Card>
-                            <Card.Body><h1>Assets</h1><Button variant="link" onClick={CreateAsset}>+ create asset</Button></Card.Body>
+                            <Card.Body>
+                                <h1>Assets</h1>
+                                <Button variant="link" onClick={CreateAsset}>+ create asset</Button>
+                                <Form handleSubmit={this.handleSubmit} />
+                            </Card.Body>
                         </Card>
-                        <Table striped bordered hover variant="dark">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Asset ID</th>
-                                    <th>Name</th>
-                                    <th>Symbol</th>
-                                    <th>Total Supply</th>
-                                    <th><Button variant="outline-info">Reload</Button></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>2wR5jFEHeECTQLbWWQr1fhJuj4FDNjGviCBRTamvGTqayVBDrC</td>
-                                    <td>TEcoin the coin of Team Entropy</td>
-                                    <td>TEEN</td>
-                                    <td>0.00</td>
-                                    <th>
-                                        <Button variant="outline-success" onClick={AssetAirdrop}>Send</Button>
-                                    </th>
-                                </tr>
-                                    <td>2</td>
-                                    <td>2J8rV9wPmsJJXHHzLf9aUiqWRC5LmHdN3dfuvNUvaYnoSr8pVe</td>
-                                    <td>Psycho Token</td>
-                                    <td>SIKO</td>
-                                    <td>0.00</td>
-                                    <th>
-                                        <Button variant="outline-success" onClick={AssetAirdrop}>Send</Button>
-                                    </th>
-                            </tbody>
-                        </Table>
+                        <Table4Assets assetData={assets} sendAsset={this.sendAsset}/>
                     </Container>
                 </div>
-            </main>
-        </div>
-    );
+            </div>
+        );
+    }
 }
 
 export default App;
