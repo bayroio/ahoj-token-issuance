@@ -4,14 +4,13 @@ import Table from 'react-bootstrap/Table'
 
 const TableHeaderAssets = () => { 
     return (
-        <thead>        
+        <thead className="text-center">        
             <tr>
-                <th>#</th>
                 <th>Asset ID</th>
                 <th>Name</th>
-                <th>Symbol</th>
-                <th>Total Supply</th>
-                <th><Button variant="outline-info">Reload</Button></th>
+                <th width="40px">Symbol</th>
+                <th width="200px">Total Supply</th>
+                <th width="100px"><Button variant="outline-info">Reload</Button></th>
             </tr>
         </thead>
     );
@@ -21,7 +20,6 @@ const TableBodyAssets = props => {
     const rows = props.assetData.map((row, index) => {
         return (
             <tr key={index}>
-                <td>{index}</td>
                 <td>{row.assetid}</td>
                 <td>{row.name}</td>
                 <td>{row.symbol}</td>

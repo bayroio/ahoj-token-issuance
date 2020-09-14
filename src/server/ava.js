@@ -14,17 +14,17 @@ const ASSET_ID = process.env.REACT_APP_ASSET_ID; // Which asset is being sent fr
 const DROP_SIZE =  process.env.REACT_APP_DROP_SIZE_X || 1000; // how much of the given asset to transfer from the faucet
 const AVAX_FEE =  process.env.REACT_APP_AVAX_FEE || 1000000; // how much of the given asset to transfer from the faucet
 
-let bintools = avalanche.BinTools.getInstance();
+//const bintools = BinTools.getInstance(); 
+const bintools = avalanche.BinTools.getInstance();
 
-let ava = new avalanche.Avalanche(AVA_IP, parseInt(AVA_PORT), AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID);
+//const ava = new Avalanche(AVA_IP, parseInt(AVA_PORT), AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID); 
+const ava = new avalanche.Avalanche(AVA_IP, parseInt(AVA_PORT), AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID);
 let xchain = ava.XChain();
     xchain.setFee(new BN(AVAX_FEE));
-
 
 let myKeychain = xchain.keyChain();
 let keypair = myKeychain.importKey(PK_X);
 const FAUCET_ADDRESS = keypair.getAddressString();  //X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u
-
 
 const CONFIG = {
     AVA_IP: AVA_IP,

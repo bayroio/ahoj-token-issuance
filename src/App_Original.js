@@ -1,7 +1,7 @@
 import React, {Component}  from 'react';
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
-import {xchain, myKeychain, BN} from './server/ava'
+import {myKeychain} from './server/ava'
 import {InitialStates, SECPTransferOutput} from 'avalanche/dist/apis/avm'
 
 import Table4Assets from './Table4Assets';
