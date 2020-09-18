@@ -8,6 +8,7 @@ class AssetForm extends Component {
         super(props);
         
         this.initialState = {
+            assetid:'',
             name: '',
             symbol: '',
             totalsupply: ''
@@ -29,7 +30,6 @@ class AssetForm extends Component {
         
         this.props.handleSubmit(this.state);
         this.setState(this.initialState);
-        console.log("onFormSubmit");
     }
 
     render() {

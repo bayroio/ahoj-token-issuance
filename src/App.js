@@ -1,7 +1,7 @@
 import React, {Component}  from 'react';
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
-import {xchain, myKeychain, BN} from './server/ava'
+import {xchain, myKeychain, bintools, BN} from './server/ava'
 import {InitialStates, SECPTransferOutput} from 'avalanche/dist/apis/avm'
 
 import Table4Assets from './Table4Assets';
@@ -29,10 +29,11 @@ async function CreateAsset(asset) {
     console.log("addresses[0]: ", addresses[0])
     let keypair = myKeychain.getKey(addresses[0])
     console.log("keypair: ", keypair)
+    console.log("asset.totalsupply: ", asset.totalsupply);
 
-    // Create outputs for the asset's initial state
-    //let secpOutput1 = SecpOutput(new BN(asset.totalsupply), addresses, new BN(asset.totalsupply), 1);
-    let secpOutput1 = new SECPTransferOutput(new BN(400), new BN(400), 1, addresses)
+    // Create outputs for the asset's inistial state
+    let secpOutput1 = new SECPTransferOutput(new BN(asset.totalsupply), addresses, new BN(asset.totalsupply), 1);
+    //let secpOutput1 = new SECPTransferOutput(new BN(400), addresses, new BN(400), 1)
     //let secpOutput2 = new SecpOutput(new BN(500), [addresses[1]], new BN(400), 1);
     //let secpOutput3 = new SecpOutput(new BN(600), [addresses[1], addresses[2]], new BN(400), 1);
 
@@ -43,11 +44,12 @@ async function CreateAsset(asset) {
     //initialState.addOutput(secpOutput3);
 
     // Fetch the UTXOSet for our addresses
-    let utxos = await xchain.getUTXOs(addresses);
+    let utxos = await xchain.getUTXOs(addressStrings[0]);
     console.log("utoxs: ", utxos);
 
     // Make an unsigned Create Asset transaction from the data compiled earlier
-    let unsigned = await xchain.buildCreateAssetTx(utxos, addresses, initialState, name, symbol, denomination);
+    console.log("name: ", name)
+    let unsigned = await xchain.buildCreateAssetTx(utxos, addressStrings, addressStrings, initialState, name, symbol, denomination);
     console.log("unsigned: ", unsigned);
 
     //let signed = unsigned.sign(myKeychain)
@@ -64,9 +66,15 @@ async function CreateAsset(asset) {
 
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
     let status = await xchain.getTxStatus(txid); 
+    let Transaccion = await xchain.getTx(txid);
+    let AVAXAssetID = xchain.AVAXAssetID;
 
     console.log("Status: ", status)
     console.log("Asset ID: ", txid)
+    console.log("Transaccion: ", Transaccion)
+    console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
+    console.log("AVAX Asset ID - String: ", bintools.bufferToString(AVAXAssetID))
+    return(txid);
 }
 
 async function AssetAirdrop() {
@@ -153,10 +161,6 @@ class App extends Component {
 
         this.state = this.initialState;
     }
-    /*state = {
-        assets: [],
-        avaxAddress: "X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u"
-    };*/
 
     SendAsset = index => {
         const { assets } = this.state;
@@ -164,7 +168,11 @@ class App extends Component {
 
     handleSubmit = async (asset) => {
         console.log("Valores: ", asset);
-        await CreateAsset(asset);
+        let txId = await CreateAsset(asset);
+        console.log("txID: ", txId);
+        asset.assetid = txId;
+        asset.totalsupply = asset.totalsupply/1000000000;
+        console.log("asset.assetid: ", asset.assetid);
         this.setState({assets: [...this.state.assets, asset]});
     }
 
