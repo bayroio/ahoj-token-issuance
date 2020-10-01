@@ -185,8 +185,9 @@ class App extends Component {
         this.state = this.initialState;
     }
 
-    SendAsset = index => {
-        const { assets } = this.state;
+    SendAsset = (asset) => {
+        //const { assets } = this.state;
+        console.log("asset: ", asset);
     }
 
     handleSubmit = async (asset) => {
@@ -195,6 +196,8 @@ class App extends Component {
         console.log("txID: ", txId);
         asset.assetid = txId;
         asset.totalsupply = asset.totalsupply/1000000000;
+        //asset.assetid = 1122334455;
+        //asset.totalsupply = 10000;
         console.log("asset.assetid: ", asset.assetid);
         this.setState({assets: [...this.state.assets, asset]});
     }

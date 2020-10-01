@@ -1,12 +1,13 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button'
 import Table from 'react-bootstrap/Table'
+import Modal from 'react-bootstrap/Modal'
 
 const TableHeaderAssets = () => { 
     return (
         <thead className="text-center">        
             <tr>
-                <th></th>
+                <th width="30px">#</th>
                 <th>Name</th>
                 <th width="40px">Symbol</th>
                 <th width="200px">Supply</th>
@@ -24,7 +25,7 @@ const TableBodyAssets = props => {
                 <td>{row.name}</td>
                 <td>{row.symbol}</td>
                 <td>{row.totalsupply}</td>
-                <td><Button variant="outline-success" onClick={() => props.sendAsset(index)}>Send</Button></td>
+                <td><Button variant="outline-success" onClick={() => props.sendAsset(index)}></Button></td>
             </tr>
         );
     });
