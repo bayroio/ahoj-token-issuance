@@ -6,11 +6,11 @@ const TableHeaderAssets = () => {
     return (
         <thead className="text-center">        
             <tr>
-                <th>Asset ID</th>
+                <th></th>
                 <th>Name</th>
                 <th width="40px">Symbol</th>
-                <th width="200px">Total Supply</th>
-                <th width="100px"><Button variant="outline-info">Reload</Button></th>
+                <th width="200px">Supply</th>
+                <th width="100px"><Button variant="outline-info"></Button></th>
             </tr>
         </thead>
     );
@@ -20,7 +20,7 @@ const TableBodyAssets = props => {
     const rows = props.assetData.map((row, index) => {
         return (
             <tr key={index}>
-                <td>{row.assetid}</td>
+                <td>{index}</td>
                 <td>{row.name}</td>
                 <td>{row.symbol}</td>
                 <td>{row.totalsupply}</td>

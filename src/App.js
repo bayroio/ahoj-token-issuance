@@ -13,12 +13,21 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 async function CreateAsset(asset) {
     console.log("--- Creating Asset --- ", asset);
 
+    
     let name = asset.name;
     let symbol = asset.symbol;
 
     // Where is the decimal point indicate what 1 asset is and where fractional assets begin
     // Ex: 1 AVAX is denomination 9, so the smallest unit of AVAX is nanoAVAX (nAVAX) at 10^-9 AVAX
     let denomination = 9;
+
+    /*
+    let addresses = myKeychain.getAddresses();
+    let initialHolders = [{"address": addresses[0], "amount": "1000000000000000"}]; //asset.totalsupply}];
+    let assetID = xchain.createFixedCapAsset("eherrador", "LFMOxto24", name, symbol, denomination, initialHolders);
+    console.log("asset ID: ", assetID)
+    return(assetID);
+    */
 
     //myKeychain.makeKey();
     //myKeychain.makeKey();
@@ -44,12 +53,18 @@ async function CreateAsset(asset) {
     //initialState.addOutput(secpOutput3);
 
     // Fetch the UTXOSet for our addresses
-    let utxos = await xchain.getUTXOs(addressStrings[0]);
+    let utxos = await xchain.getUTXOs(addressStrings); //[0]);
     console.log("utoxs: ", utxos);
 
     // Make an unsigned Create Asset transaction from the data compiled earlier
     console.log("name: ", name)
-    let unsigned = await xchain.buildCreateAssetTx(utxos, addressStrings, addressStrings, initialState, name, symbol, denomination);
+
+    //let unsigned = utxos.utxos.buildCreateAssetTx(5, xchain.getBlockchainID, addresses, addresses, initialState, name, symbol, denomination);
+
+    let unsigned = await xchain.buildCreateAssetTx(
+        utxos.utxos, addressStrings, addressStrings, initialState, 
+        name, symbol, denomination
+    );
     console.log("unsigned: ", unsigned);
 
     //let signed = unsigned.sign(myKeychain)
@@ -58,22 +73,26 @@ async function CreateAsset(asset) {
     console.log("tx signed: ", signed.toString());
 
     // using the Tx class
-    let txid = await xchain.issueTx(signed); //returns an Avalanche serialized string for the TxID
+    let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
     // using the base-58 representation
     //let txid = await xchain.issueTx(signed.toString()); //returns an Avalanche serialized string for the TxID
     // using the transaction Buffer
     //let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
 
+    console.log("utoxs: ", utxos.utxos.getAssetIDs());
+
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
     let status = await xchain.getTxStatus(txid); 
-    let Transaccion = await xchain.getTx(txid);
+    //let Transaccion = await xchain.getTx(txid);
     let AVAXAssetID = xchain.AVAXAssetID;
 
     console.log("Status: ", status)
-    console.log("Asset ID: ", txid)
-    console.log("Transaccion: ", Transaccion)
-    console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
-    console.log("AVAX Asset ID - String: ", bintools.bufferToString(AVAXAssetID))
+    console.log("Asset ID/TxID: ", txid)
+    //console.log("asset ID: ", assetID)
+    //console.log("Transaccion: ", Transaccion)
+    //console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
+    console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
+
     return(txid);
 }
 
@@ -154,7 +173,11 @@ class App extends Component {
         
         this.initialState = {
             assets: [],
-            avaxAddress: 'X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u',
+            // Internal Address: X-fuji10749uc4dqgvhasvyrd0urq2jcyrheyfe3aldq9
+            // External Address 0 with Balance: X-fuji1fd2h5ers2xffll2s7d9m0npn4wf0ghwfmmcuaf
+            // External Address 1: X-fuji1vpd7skm7q45rm5jey4me4ak40tunj3fshysfw6
+            // Derived AVAX Wallet Address: X-fuji1vpd7skm7q45rm5jey4me4ak40tunj3fshysfw6
+            avaxAddress: myKeychain.getAddressStrings(),//'X-fuji1fd2h5ers2xffll2s7d9m0npn4wf0ghwfmmcuaf',
             modalShow: false,
             setModalShow: false
         };

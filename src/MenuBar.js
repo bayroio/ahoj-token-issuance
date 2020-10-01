@@ -21,8 +21,8 @@ const MenuBar = (props) => {
                         <NavDropdown.Divider />
                         <NavDropdown.Item href="#">Access / Disconnect</NavDropdown.Item>
                     </NavDropdown>
-                    <NavDropdown title="Everest" id="select-network">
-                        <NavDropdown.Item href="#">Everest Testnet</NavDropdown.Item>
+                    <NavDropdown title="Fuji" id="select-network">
+                        <NavDropdown.Item href="#">Fuji Testnet</NavDropdown.Item>
                         <NavDropdown.Item href="#">Localhost</NavDropdown.Item>
                         <NavDropdown.Divider />
                         <NavDropdown.Item href="#">+ custom network</NavDropdown.Item>
