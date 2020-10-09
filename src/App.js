@@ -7,6 +7,8 @@ import {InitialStates, SECPTransferOutput} from 'avalanche/dist/apis/avm'
 import Table4Assets from './Table4Assets';
 import MenuBar from './MenuBar';
 import AssetForm from './AssetForm';
+import AVAXBalanceForm from './AVAXBalanceForm'
+import AnyOtherAssetForm from './AnyOtherAssetForm'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -196,8 +198,6 @@ class App extends Component {
         console.log("txID: ", txId);
         asset.assetid = txId;
         asset.totalsupply = asset.totalsupply/1000000000;
-        //asset.assetid = 1122334455;
-        //asset.totalsupply = 10000;
         console.log("asset.assetid: ", asset.assetid);
         this.setState({assets: [...this.state.assets, asset]});
     }
@@ -218,6 +218,20 @@ class App extends Component {
                             </Card.Body>
                         </Card>
                         <Table4Assets assetData={assets} sendAsset={this.sendAsset}/>
+                        <br />
+                        <Card>
+                            <Card.Body>
+                                <h1>AVAX</h1>
+                                <AVAXBalanceForm handleSubmit={this.handleSubmit} />
+                            </Card.Body>
+                        </Card>
+                        <br />
+                        <Card>
+                            <Card.Body>
+                                <h1>Any Other Asset</h1>
+                                < AnyOtherAssetForm handleSubmit={this.handleSubmit} />
+                            </Card.Body>
+                        </Card>
                     </Container>
                 </div>
             </div>
