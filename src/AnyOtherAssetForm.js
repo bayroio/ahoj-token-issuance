@@ -31,7 +31,7 @@ class AnyOtherAssetForm extends Component {
         
         let assetID = this.state.assetid1;
         console.log("any other asset: ", assetID)
-        let assetBalance = utxos.utxos.getBalance(addresses, assetID);
+        let assetBalance = utxos.utxos.getBalance(addresses, bintools.stringToBuffer(assetID));
         console.log("assetBalance: ", assetBalance)
         let _assetBalance = assetBalance.toNumber()/1000000000;
         console.log("Any Other Asset ID Balance: ", _assetBalance)
