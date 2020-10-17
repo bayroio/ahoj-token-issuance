@@ -1,24 +1,35 @@
-import React, {Component}  from 'react';
+import React, {Component, useState, useEffect}  from 'react';
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
-import {xchain, myKeychain, bintools, BN} from './server/ava'
+import {xchain, myKeychain, bintools, BN, CONFIG} from './server/ava'
 import {InitialStates, SECPTransferOutput} from 'avalanche/dist/apis/avm'
+
+import { Magic } from "magic-sdk";
+import { AvalancheExtension } from "@magic-ext/avalanche";
 
 import Table4Assets from './Table4Assets';
 import MenuBar from './MenuBar';
 import AssetForm from './AssetForm';
 import AVAXBalanceForm from './AVAXBalanceForm'
-import AnyOtherAssetForm from './AnyOtherAssetForm'
+import GetContractBalanceFromCForm from './GetContractBalanceFromCForm'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
+
+const magic = new Magic('pk_test_8E9F64F27913FA8E', {
+  extensions: {
+    xchain: new AvalancheExtension({
+      rpcUrl: CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
+      chainId: CONFIG.AVA_CHAIN_ID, //'X',
+      networkId: CONFIG.AVA_NETWORK_ID,
+    })
+  }
+});
 
 async function CreateAsset(asset) {
     console.log("--- Creating Asset --- ", asset);
 
-    
     let name = asset.name;
     let symbol = asset.symbol;
-
     // Where is the decimal point indicate what 1 asset is and where fractional assets begin
     // Ex: 1 AVAX is denomination 9, so the smallest unit of AVAX is nanoAVAX (nAVAX) at 10^-9 AVAX
     let denomination = 9;
@@ -36,30 +47,25 @@ async function CreateAsset(asset) {
 
     let addresses = myKeychain.getAddresses();
     let addressStrings = myKeychain.getAddressStrings(); 
-    console.log("addressStrings: ", addressStrings)
-    console.log("addresses[0]: ", addresses[0])
+    //console.log("addressStrings: ", addressStrings)
+    //console.log("addresses[0]: ", addresses[0])
     let keypair = myKeychain.getKey(addresses[0])
-    console.log("keypair: ", keypair)
-    console.log("asset.totalsupply: ", asset.totalsupply);
+    //console.log("keypair: ", keypair)
+    //console.log("asset.totalsupply: ", asset.totalsupply);
 
     // Create outputs for the asset's inistial state
     let secpOutput1 = new SECPTransferOutput(new BN(asset.totalsupply), addresses, new BN(asset.totalsupply), 1);
-    //let secpOutput1 = new SECPTransferOutput(new BN(400), addresses, new BN(400), 1)
-    //let secpOutput2 = new SecpOutput(new BN(500), [addresses[1]], new BN(400), 1);
-    //let secpOutput3 = new SecpOutput(new BN(600), [addresses[1], addresses[2]], new BN(400), 1);
 
     // Populate the initialStates with the outputs
     let initialState = new InitialStates();
     initialState.addOutput(secpOutput1);
-    //initialState.addOutput(secpOutput2);
-    //initialState.addOutput(secpOutput3);
 
     // Fetch the UTXOSet for our addresses
     let utxos = await xchain.getUTXOs(addressStrings); //[0]);
-    console.log("utoxs: ", utxos);
+    //console.log("utoxs: ", utxos);
 
     // Make an unsigned Create Asset transaction from the data compiled earlier
-    console.log("name: ", name)
+    //console.log("name: ", name)
 
     //let unsigned = utxos.utxos.buildCreateAssetTx(5, xchain.getBlockchainID, addresses, addresses, initialState, name, symbol, denomination);
 
@@ -67,12 +73,12 @@ async function CreateAsset(asset) {
         utxos.utxos, addressStrings, addressStrings, initialState, 
         name, symbol, denomination
     );
-    console.log("unsigned: ", unsigned);
+    //console.log("unsigned: ", unsigned);
 
     //let signed = unsigned.sign(myKeychain)
     let signed = xchain.signTx(unsigned); //returns a Tx class
-    console.log("signed: ", signed);
-    console.log("tx signed: ", signed.toString());
+    //console.log("signed: ", signed);
+    //console.log("tx signed: ", signed.toString());
 
     // using the Tx class
     let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
@@ -81,19 +87,19 @@ async function CreateAsset(asset) {
     // using the transaction Buffer
     //let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
 
-    console.log("utoxs: ", utxos.utxos.getAssetIDs());
+    //console.log("utoxs: ", utxos.utxos.getAssetIDs());
 
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
     let status = await xchain.getTxStatus(txid); 
     //let Transaccion = await xchain.getTx(txid);
     let AVAXAssetID = xchain.AVAXAssetID;
 
-    console.log("Status: ", status)
-    console.log("Asset ID/TxID: ", txid)
+    //console.log("Status: ", status)
+    //console.log("Asset ID/TxID: ", txid)
     //console.log("asset ID: ", assetID)
     //console.log("Transaccion: ", Transaccion)
     //console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
-    console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
+    //console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
 
     return(txid);
 }
@@ -155,22 +161,43 @@ async function CheckBalance() {
 
     let mybalance = utxos.getBalance(addresses, assetid);
     console.log("Address ", addressStrings[0], " balance: ", mybalance.toNumber())
-
-    /*xchain.getBalance(addressStrings[0], "2qoA17geKM6D8oFwaZzRgQ4bE2sthDxhQJ8ZE7sjRC6BRJ7bDh").then(res => {
-        let balance =  res.balance;
-        console.log("Address ", addressStrings[0], " balance: ", res.balance)
-    });*/
 }
 
-/*function DisplayEnviroment() {
-    //console.log(`Nombre ${process.env.REACT_APP_NOMBRE}`);
-    console.log("REACT_APP_AVA_IP: ", process.env.REACT_APP_AVA_IP);
-    console.log("REACT_APP_ASSET_ID: ", process.env.REACT_APP_ASSET_ID);
-    console.log("REACT_APP_DROP_SIZE_X: ", process.env.REACT_APP_DROP_SIZE_X);
-}*/
+//class App extends Component {
+export default function App() {
+    const [email, setEmail] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [assets, setAssets] = useState([]);
+    const [userMetadata, setUserMetadata] = useState({});
+    const [publicAddress, setPublicAddress] = useState("");
 
-class App extends Component {
-    constructor(props) {
+    let address = myKeychain.getAddressStrings()
+    console.log("address: ", address)
+    const [avaxAddress, setAvaxAddress] = useState(address);
+
+
+    useEffect(() => {
+        magic.user.isLoggedIn().then(async (magicIsLoggedIn) => {
+        setIsLoggedIn(magicIsLoggedIn);
+        if (magicIsLoggedIn) {
+            const metadata = await magic.user.getMetadata();
+            setPublicAddress(metadata.publicAddress);
+            setUserMetadata(metadata);
+        }
+        });
+    }, [isLoggedIn]);
+
+    const login = async () => {
+        await magic.auth.loginWithMagicLink({ email });
+        setIsLoggedIn(true);
+    };
+
+    const logout = async () => {
+        await magic.user.logout();
+        setIsLoggedIn(false);
+    };
+
+    /*constructor(props) {
         super(props);
         
         this.initialState = {
@@ -185,14 +212,14 @@ class App extends Component {
         };
 
         this.state = this.initialState;
-    }
+    }*/
 
-    SendAsset = (asset) => {
+    const sendAsset = (asset) => {
         //const { assets } = this.state;
         console.log("asset: ", asset);
-    }
+    };
 
-    handleSubmit = async (asset) => {
+    const handleSubmit = async (asset) => {
         console.log("Valores: ", asset);
         let txId = await CreateAsset(asset);
         console.log("txID: ", txId);
@@ -200,12 +227,29 @@ class App extends Component {
         asset.totalsupply = asset.totalsupply/1000000000;
         console.log("asset.assetid: ", asset.assetid);
         this.setState({assets: [...this.state.assets, asset]});
-    }
+    };
 
-    render() {
-        const { assets, avaxAddress } = this.state;
-
-        return (
+    return (
+        <div className="App">
+        {!isLoggedIn ? (
+            <div className="container">
+            <h1>AHOJ Finance Network</h1>
+            <hr/>
+            <h2>Ahoj.Issuance</h2>
+            <br/>
+            <h4><i>Please sign up or login</i></h4>
+            <input
+                type="email"
+                name="email"
+                required="required"
+                placeholder="Enter your email"
+                onChange={(event) => {
+                setEmail(event.target.value);
+                }}
+            />
+            <button onClick={login}>Send</button>
+            </div>
+        ) : (
             <div>
                 <MenuBar avaxAddress={avaxAddress} />
                 <br></br><br></br><br></br>
@@ -214,29 +258,28 @@ class App extends Component {
                         <Card>
                             <Card.Body>
                                 <h1>Assets</h1>
-                                <AssetForm handleSubmit={this.handleSubmit} />
+                                <AssetForm handleSubmit={handleSubmit} />
                             </Card.Body>
                         </Card>
-                        <Table4Assets assetData={assets} sendAsset={this.sendAsset}/>
+                        <Table4Assets assetData={assets} sendAsset={sendAsset}/>
                         <br />
                         <Card>
                             <Card.Body>
                                 <h1>AVAX</h1>
-                                <AVAXBalanceForm handleSubmit={this.handleSubmit} />
+                                <AVAXBalanceForm handleSubmit={handleSubmit} />
                             </Card.Body>
                         </Card>
                         <br />
                         <Card>
                             <Card.Body>
-                                <h1>Any Other Asset</h1>
-                                < AnyOtherAssetForm handleSubmit={this.handleSubmit} />
+                                <h1>Get Balance of a Contract from C-Chain</h1>
+                                < GetContractBalanceFromCForm />
                             </Card.Body>
                         </Card>
                     </Container>
                 </div>
             </div>
-        );
-    }
+        )}
+        </div>  
+    );
 }
-
-export default App;

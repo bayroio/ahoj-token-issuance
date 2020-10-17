@@ -13,6 +13,7 @@ const PK_C =  process.env.REACT_APP_PRIVATE_KEY_C; // The private key that holds
 const ASSET_ID = process.env.REACT_APP_ASSET_ID; // Which asset is being sent from the faucet
 const DROP_SIZE =  process.env.REACT_APP_DROP_SIZE_X || 1000; // how much of the given asset to transfer from the faucet
 const AVAX_FEE =  process.env.REACT_APP_AVAX_FEE || 1000000; // how much of the given asset to transfer from the faucet
+const AVA_RPC_URL = process.env.REACT_APP_AVA_RPC_URL || 'https://api.avax-test.network';
 
 //const bintools = BinTools.getInstance(); 
 const bintools = avalanche.BinTools.getInstance();
@@ -37,7 +38,8 @@ const CONFIG = {
     PK_C: PK_C,
     ASSET_ID: ASSET_ID,
     DROP_SIZE: DROP_SIZE,
-    FAUCET_ADDRESS: FAUCET_ADDRESS
+    FAUCET_ADDRESS: FAUCET_ADDRESS,
+    AVA_RPC_URL: AVA_RPC_URL
 };
 
 console.log(CONFIG);
@@ -75,6 +77,6 @@ module.exports = {
     xchain,
     myKeychain,
     bintools,
-    BN,
-    CONFIG
+    CONFIG,
+    BN
 };

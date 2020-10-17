@@ -11,3 +11,16 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.App {
+  align-self: center;
+  justify-self: center;
+}
+
+.container {
+  width: 300px;
+  background-color: #eee;
+  text-align: center;
+  padding: 27px 18px;
+  margin-bottom: 27px;
+}
