@@ -4,16 +4,16 @@ const BN = require('bn.js');
 const AVA_IP = process.env.REACT_APP_AVA_IP || "localhost";
 const AVA_PORT = process.env.REACT_APP_AVA_PORT || "9650";
 const AVA_PROTOCOL = process.env.REACT_APP_AVA_PROTOCOL || "http";
-const AVA_NETWORK_ID = process.env.REACT_APP_AVA_NETWORK_ID || "5";
+const AVA_NETWORK_ID = process.env.REACT_APP_AVA_NETWORK_ID || "4";
 
-let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || '2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm';
+let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || 'X'; //'2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm';
 
 const PK_X =  process.env.REACT_APP_PRIVATE_KEY_X; // The private key that holds the given assets to supply the faucet
 const PK_C =  process.env.REACT_APP_PRIVATE_KEY_C; // The private key that holds the given assets to supply the faucet
 const ASSET_ID = process.env.REACT_APP_ASSET_ID; // Which asset is being sent from the faucet
 const DROP_SIZE =  process.env.REACT_APP_DROP_SIZE_X || 1000; // how much of the given asset to transfer from the faucet
 const AVAX_FEE =  process.env.REACT_APP_AVAX_FEE || 1000000; // how much of the given asset to transfer from the faucet
-const AVA_RPC_URL = process.env.REACT_APP_AVA_RPC_URL || 'https://api.avax-test.network';
+const AVA_RPC_URL = process.env.REACT_APP_AVA_RPC_URL || 'https://testapi.avax.network'; //'https://api.avax-test.network';  
 
 //const bintools = BinTools.getInstance(); 
 const bintools = avalanche.BinTools.getInstance();

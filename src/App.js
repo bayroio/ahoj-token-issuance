@@ -15,14 +15,14 @@ import GetContractBalanceFromCForm from './GetContractBalanceFromCForm'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const magic = new Magic('pk_test_8E9F64F27913FA8E', {
-  extensions: {
-    xchain: new AvalancheExtension({
-      rpcUrl: CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
-      chainId: CONFIG.AVA_CHAIN_ID, //'X',
-      networkId: CONFIG.AVA_NETWORK_ID,
-    })
-  }
+const magic = new Magic('pk_test_E1B2E5E5C5DE9B42', {
+    extensions: {
+        xchain: new AvalancheExtension({
+            rpcUrl: 'https://testapi.avax.network', //CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
+            chainId: 'X', //CONFIG.AVA_CHAIN_ID, //'X',
+            networkId: '4', //CONFIG.AVA_NETWORK_ID,
+        })
+    }
 });
 
 async function CreateAsset(asset) {
@@ -175,12 +175,17 @@ export default function App() {
     console.log("address: ", address)
     const [avaxAddress, setAvaxAddress] = useState(address);
 
+    console.log("CONFIG.AVA_RPC_URL : ", CONFIG.AVA_RPC_URL);
+    console.log("CONFIG.AVA_CHAIN_ID : ", CONFIG.AVA_CHAIN_ID);
+    console.log("CONFIG.AVA_NETWORK_ID : ", CONFIG.AVA_NETWORK_ID);
+
 
     useEffect(() => {
         magic.user.isLoggedIn().then(async (magicIsLoggedIn) => {
         setIsLoggedIn(magicIsLoggedIn);
         if (magicIsLoggedIn) {
             const metadata = await magic.user.getMetadata();
+            console.log(metadata)
             setPublicAddress(metadata.publicAddress);
             setUserMetadata(metadata);
         }
@@ -253,6 +258,13 @@ export default function App() {
             <div>
                 <MenuBar avaxAddress={avaxAddress} />
                 <br></br><br></br><br></br>
+                <div className="container">
+                    <h1>Welcome</h1>
+                    <p>{userMetadata.email}</p>
+                    <div className="info">{publicAddress}</div>
+                    <br />
+                    <button onClick={logout}>Logout</button>
+                </div>
                 <div id="creatingasset">
                     <Container>
                         <Card>
