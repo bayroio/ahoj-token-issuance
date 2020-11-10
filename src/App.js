@@ -15,7 +15,7 @@ import GetContractBalanceFromCForm from './GetContractBalanceFromCForm'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const magic = new Magic('pk_test_BB7140A939D0574A', {
+const magic = new Magic('pk_test_F6F27951368B5DFD', {
     extensions: {
         xchain: new AvalancheExtension({
             rpcUrl: "https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
