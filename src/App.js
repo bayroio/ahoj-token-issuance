@@ -238,30 +238,27 @@ export default function App() {
         <div className="App">
         {!isLoggedIn ? (
             <div className="container">
-            <h1>AHOJ Finance Network</h1>
-            <hr/>
-            <h2>Ahoj.Issuance</h2>
-            <br/>
-            <h4><i>Please sign up or login</i></h4>
-            <input
-                type="email"
-                name="email"
-                required="required"
-                placeholder="Enter your email"
-                onChange={(event) => {
-                setEmail(event.target.value);
-                }}
-            />
-            <button onClick={login}>Send</button>
+                <h1>Ahoj Finance</h1>
+                <hr/>
+                <h4><i>Please sign up or login</i></h4>
+                <input
+                    type="email"
+                    name="email"
+                    required="required"
+                    placeholder="Enter your email"
+                    onChange={(event) => {
+                    setEmail(event.target.value);
+                    }}
+                />
+                <button onClick={login}>Send</button>
             </div>
         ) : (
             <div>
-                <MenuBar avaxAddress={avaxAddress} />
+                <MenuBar userEmail={userMetadata.email} avaxAddress={publicAddress} />
                 <br></br><br></br><br></br>
                 <div className="container">
-                    <h1>Welcome</h1>
-                    <p>{userMetadata.email}</p>
-                    <div className="info">{publicAddress}</div>
+                    <h1>Ahoj.Carlinga</h1>
+                    <p>Admin Tools for Team Entropy... only!</p>
                     <br />
                     <button onClick={logout}>Logout</button>
                 </div>
@@ -269,22 +266,39 @@ export default function App() {
                     <Container>
                         <Card>
                             <Card.Body>
-                                <h1>Assets</h1>
+                                <h1>Mint New Assets</h1>
+                                <p>PLEASE: Do not mint AHOJ Token!</p>
                                 <AssetForm handleSubmit={handleSubmit} />
                             </Card.Body>
                         </Card>
                         <Table4Assets assetData={assets} sendAsset={sendAsset}/>
-                        <br />
+                    </Container>
+                </div>
+                <div id="sendasset">
+                    <Container>
                         <Card>
                             <Card.Body>
-                                <h1>AVAX</h1>
+                                <h1>Send Asset</h1>
                                 <AVAXBalanceForm handleSubmit={handleSubmit} />
                             </Card.Body>
                         </Card>
-                        <br />
+                    </Container>
+                </div>
+                <div id="getbalancecontract">
+                    <Container>
                         <Card>
                             <Card.Body>
                                 <h1>Get Balance of a Contract from C-Chain</h1>
+                                < GetContractBalanceFromCForm />
+                            </Card.Body>
+                        </Card>
+                    </Container>
+                </div>
+                <div id="getbalanceacount">
+                    <Container>
+                        <Card>
+                            <Card.Body>
+                                <h1>Get Balance of an Account</h1>
                                 < GetContractBalanceFromCForm />
                             </Card.Body>
                         </Card>

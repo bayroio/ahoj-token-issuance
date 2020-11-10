@@ -9,8 +9,11 @@ class AVAXBalanceForm extends Component {
         
         this.initialState = {
             balance: '',
+            token: '',
             amount: '',
-            friend: ''
+            memo: '',
+            friend: '',
+            fee: ''
         };
 
         this.state = this.initialState;
@@ -67,25 +70,28 @@ class AVAXBalanceForm extends Component {
     }
 
     render() {
-        const {balance, amount, friend} = this.state; 
+        const {balance, token, amount, memo, friend, fee} = this.state; 
 
         return (
             <>
-            <Form onSubmit={this.onFormSubmitBalance}>
-                <Form.Group>
-                    <Form.Control type="text" name="balance" id="balance" placeholder="avax balance" value={balance} readOnly />
-                </Form.Group>
-                <Button variant="primary" type="submit">
-                    Get Balance
-                </Button>
-            </Form>
-            <br />
             <Form onSubmit={this.onFormSubmitSend}>
                 <Form.Group>
-                    <Form.Control type="text" name="amount" id="amount" placeholder="avax amount to send" value={amount} onChange={this.handleChange} />
+                    <Form.Control type="text" name="token" id="token" placeholder="token id" value={token} onChange={this.handleChange} />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Control type="text" name="amount" id="amount" placeholder="amount to send" value={amount} onChange={this.handleChange} />
                 </Form.Group>
                 <Form.Group>
                     <Form.Control type="text" name="friend" id="friend" placeholder="friend address" value={friend} onChange={this.handleChange} />
+                </Form.Group>
+                <Form.Group>
+                    <Form.Control type="text" name="memo" id="memo" placeholder="memo (optional)" value={memo} onChange={this.handleChange} />
+                </Form.Group>
+                <br />
+                <hr />
+                <Form.Group>
+                    <Form.Label>Transaction Fee </Form.Label>
+                    <Form.Control type="text" name="fee" id="fee" placeholder="0.001 AVAX"  onChange={this.handleChange} />
                 </Form.Group>
                 <Button variant="primary" type="submit">
                     Send
