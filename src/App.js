@@ -15,12 +15,12 @@ import GetContractBalanceFromCForm from './GetContractBalanceFromCForm'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const magic = new Magic('pk_test_E1B2E5E5C5DE9B42', {
+const magic = new Magic('pk_test_BB7140A939D0574A', {
     extensions: {
         xchain: new AvalancheExtension({
-            rpcUrl: 'https://testapi.avax.network', //CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
-            chainId: 'X', //CONFIG.AVA_CHAIN_ID, //'X',
-            networkId: '4', //CONFIG.AVA_NETWORK_ID,
+            rpcUrl: "https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
+            chainId: "X", //CONFIG.AVA_CHAIN_ID, //'X',
+            networkId: 4 //4 //CONFIG.AVA_NETWORK_ID, //5, 4
         })
     }
 });
