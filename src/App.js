@@ -1,51 +1,78 @@
-import React from 'react';
-import Button from 'react-bootstrap/Button'
-import Navbar from 'react-bootstrap/Navbar'
-import NavDropdown from 'react-bootstrap/NavDropdown'
+import React, {Component, useState, useEffect}  from 'react';
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
-import Table from 'react-bootstrap/Table'
-import Nav from 'react-bootstrap/Nav'
-import {xchain, myKeychain, BN} from './server/ava'
-import {InitialStates, SecpOutput} from 'avalanche/dist/apis/avm'
+import {xchain, myKeychain, bintools, BN, CONFIG} from './server/ava'
+import {InitialStates, SECPTransferOutput} from 'avalanche/dist/apis/avm'
+
+import { Magic } from "magic-sdk";
+import { AvalancheExtension } from "@magic-ext/avalanche";
+
+import Table4Assets from './Table4Assets';
+import MenuBar from './MenuBar';
+import AssetForm from './AssetForm';
+import AVAXBalanceForm from './AVAXBalanceForm'
+import GetContractBalanceFromCForm from './GetContractBalanceFromCForm'
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-async function CreateAsset() {
-    console.log("--- Creating Asset ---");
+const magic = new Magic('pk_test_F6F27951368B5DFD', {
+    extensions: {
+        xchain: new AvalancheExtension({
+            rpcUrl: "https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
+            chainId: "X", //CONFIG.AVA_CHAIN_ID, //'X',
+            networkId: 4 //4 //CONFIG.AVA_NETWORK_ID, //5, 4
+        })
+    }
+});
 
-    let name = "Castor Token";
-    let symbol = "KTOR";
+async function CreateAsset(asset) {
+    console.log("--- Creating Asset --- ", asset);
 
+    let name = asset.name;
+    let symbol = asset.symbol;
     // Where is the decimal point indicate what 1 asset is and where fractional assets begin
     // Ex: 1 AVAX is denomination 9, so the smallest unit of AVAX is nanoAVAX (nAVAX) at 10^-9 AVAX
     let denomination = 9;
+
+    /*
+    let addresses = myKeychain.getAddresses();
+    let initialHolders = [{"address": addresses[0], "amount": "1000000000000000"}]; //asset.totalsupply}];
+    let assetID = xchain.createFixedCapAsset("eherrador", "LFMOxto24", name, symbol, denomination, initialHolders);
+    console.log("asset ID: ", assetID)
+    return(assetID);
+    */
 
     //myKeychain.makeKey();
     //myKeychain.makeKey();
 
     let addresses = myKeychain.getAddresses();
     let addressStrings = myKeychain.getAddressStrings(); 
-    console.log("addressStrings: ", addressStrings)
+    //console.log("addressStrings: ", addressStrings)
+    //console.log("addresses[0]: ", addresses[0])
     let keypair = myKeychain.getKey(addresses[0])
-    console.log("keypair: ", keypair)
+    //console.log("keypair: ", keypair)
+    //console.log("asset.totalsupply: ", asset.totalsupply);
 
-    // Create outputs for the asset's initial state
-    let secpOutput1 = new SecpOutput(new BN(400), addresses[0], new BN(400), 1);
-    //let secpOutput2 = new SecpOutput(new BN(500), [addresses[1]], new BN(400), 1);
-    //let secpOutput3 = new SecpOutput(new BN(600), [addresses[1], addresses[2]], new BN(400), 1);
+    // Create outputs for the asset's inistial state
+    let secpOutput1 = new SECPTransferOutput(new BN(asset.totalsupply), addresses, new BN(asset.totalsupply), 1);
 
     // Populate the initialStates with the outputs
     let initialState = new InitialStates();
     initialState.addOutput(secpOutput1);
-    //initialState.addOutput(secpOutput2);
-    //initialState.addOutput(secpOutput3);
 
     // Fetch the UTXOSet for our addresses
-    let utxos = await xchain.getUTXOs(addresses);
+    let utxos = await xchain.getUTXOs(addressStrings); //[0]);
     //console.log("utoxs: ", utxos);
 
     // Make an unsigned Create Asset transaction from the data compiled earlier
-    let unsigned = await xchain.buildCreateAssetTx(utxos, addresses, initialState, name, symbol, denomination);
+    //console.log("name: ", name)
+
+    //let unsigned = utxos.utxos.buildCreateAssetTx(5, xchain.getBlockchainID, addresses, addresses, initialState, name, symbol, denomination);
+
+    let unsigned = await xchain.buildCreateAssetTx(
+        utxos.utxos, addressStrings, addressStrings, initialState, 
+        name, symbol, denomination
+    );
     //console.log("unsigned: ", unsigned);
 
     //let signed = unsigned.sign(myKeychain)
@@ -54,17 +81,27 @@ async function CreateAsset() {
     //console.log("tx signed: ", signed.toString());
 
     // using the Tx class
-    let txid = await xchain.issueTx(signed); //returns an Avalanche serialized string for the TxID
+    let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
     // using the base-58 representation
     //let txid = await xchain.issueTx(signed.toString()); //returns an Avalanche serialized string for the TxID
     // using the transaction Buffer
     //let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
 
+    //console.log("utoxs: ", utxos.utxos.getAssetIDs());
+
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
     let status = await xchain.getTxStatus(txid); 
+    //let Transaccion = await xchain.getTx(txid);
+    let AVAXAssetID = xchain.AVAXAssetID;
 
-    console.log("Status: ", status)
-    console.log("Asset ID: ", txid)
+    //console.log("Status: ", status)
+    //console.log("Asset ID/TxID: ", txid)
+    //console.log("asset ID: ", assetID)
+    //console.log("Transaccion: ", Transaccion)
+    //console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
+    //console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
+
+    return(txid);
 }
 
 async function AssetAirdrop() {
@@ -124,91 +161,151 @@ async function CheckBalance() {
 
     let mybalance = utxos.getBalance(addresses, assetid);
     console.log("Address ", addressStrings[0], " balance: ", mybalance.toNumber())
-
-    /*xchain.getBalance(addressStrings[0], "2qoA17geKM6D8oFwaZzRgQ4bE2sthDxhQJ8ZE7sjRC6BRJ7bDh").then(res => {
-        let balance =  res.balance;
-        console.log("Address ", addressStrings[0], " balance: ", res.balance)
-    });*/
 }
 
-/*function DisplayEnviroment() {
-    //console.log(`Nombre ${process.env.REACT_APP_NOMBRE}`);
-    console.log("REACT_APP_AVA_IP: ", process.env.REACT_APP_AVA_IP);
-    console.log("REACT_APP_ASSET_ID: ", process.env.REACT_APP_ASSET_ID);
-    console.log("REACT_APP_DROP_SIZE_X: ", process.env.REACT_APP_DROP_SIZE_X);
-}*/
+//class App extends Component {
+export default function App() {
+    const [email, setEmail] = useState("");
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [assets, setAssets] = useState([]);
+    const [userMetadata, setUserMetadata] = useState({});
+    const [publicAddress, setPublicAddress] = useState("");
 
-function App() {
+    let address = myKeychain.getAddressStrings()
+    console.log("address: ", address)
+    const [avaxAddress, setAvaxAddress] = useState(address);
+
+    console.log("CONFIG.AVA_RPC_URL : ", CONFIG.AVA_RPC_URL);
+    console.log("CONFIG.AVA_CHAIN_ID : ", CONFIG.AVA_CHAIN_ID);
+    console.log("CONFIG.AVA_NETWORK_ID : ", CONFIG.AVA_NETWORK_ID);
+
+
+    useEffect(() => {
+        magic.user.isLoggedIn().then(async (magicIsLoggedIn) => {
+        setIsLoggedIn(magicIsLoggedIn);
+        if (magicIsLoggedIn) {
+            const metadata = await magic.user.getMetadata();
+            console.log(metadata)
+            setPublicAddress(metadata.publicAddress);
+            setUserMetadata(metadata);
+        }
+        });
+    }, [isLoggedIn]);
+
+    const login = async () => {
+        await magic.auth.loginWithMagicLink({ email });
+        setIsLoggedIn(true);
+    };
+
+    const logout = async () => {
+        await magic.user.logout();
+        setIsLoggedIn(false);
+    };
+
+    /*constructor(props) {
+        super(props);
+        
+        this.initialState = {
+            assets: [],
+            // Internal Address: X-fuji10749uc4dqgvhasvyrd0urq2jcyrheyfe3aldq9
+            // External Address 0 with Balance: X-fuji1fd2h5ers2xffll2s7d9m0npn4wf0ghwfmmcuaf
+            // External Address 1: X-fuji1vpd7skm7q45rm5jey4me4ak40tunj3fshysfw6
+            // Derived AVAX Wallet Address: X-fuji1vpd7skm7q45rm5jey4me4ak40tunj3fshysfw6
+            avaxAddress: myKeychain.getAddressStrings(),//'X-fuji1fd2h5ers2xffll2s7d9m0npn4wf0ghwfmmcuaf',
+            modalShow: false,
+            setModalShow: false
+        };
+
+        this.state = this.initialState;
+    }*/
+
+    const sendAsset = (asset) => {
+        //const { assets } = this.state;
+        console.log("asset: ", asset);
+    };
+
+    const handleSubmit = async (asset) => {
+        console.log("Valores: ", asset);
+        let txId = await CreateAsset(asset);
+        console.log("txID: ", txId);
+        asset.assetid = txId;
+        asset.totalsupply = asset.totalsupply/1000000000;
+        console.log("asset.assetid: ", asset.assetid);
+        this.setState({assets: [...this.state.assets, asset]});
+    };
+
     return (
-        <div>
-            <Navbar fixed="top" collapseOnSelect expand="lg" bg="dark" variant="dark">
-                <Navbar.Brand href="#creatingasset">Ahoj.AssetIssuance</Navbar.Brand>
-                <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Collapse id="responsive-navbar-nav">
-                    <Nav className="mr-auto">
-                        
-                    </Nav>
-                    <Nav>
-                        <NavDropdown title="X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u" id="avax-address">
-                            <NavDropdown.Item href="#">X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">+ new address</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">Access / Disconnect</NavDropdown.Item>
-                        </NavDropdown>
-                        <NavDropdown title="Everest" id="select-network">
-                            <NavDropdown.Item href="#">Everest Testnet</NavDropdown.Item>
-                            <NavDropdown.Item href="#">Localhost</NavDropdown.Item>
-                            <NavDropdown.Divider />
-                            <NavDropdown.Item href="#">+ custom network</NavDropdown.Item>
-                        </NavDropdown>
-                    </Nav>
-                </Navbar.Collapse>
-            </Navbar>
-            <br></br><br></br><br></br>
-            <main>
+        <div className="App">
+        {!isLoggedIn ? (
+            <div className="container">
+                <h1>Ahoj Finance</h1>
+                <hr/>
+                <h4><i>Please sign up or login</i></h4>
+                <input
+                    type="email"
+                    name="email"
+                    required="required"
+                    placeholder="Enter your email"
+                    onChange={(event) => {
+                    setEmail(event.target.value);
+                    }}
+                />
+                <button onClick={login}>Send</button>
+            </div>
+        ) : (
+            <div>
+                <MenuBar userEmail={userMetadata.email} avaxAddress={publicAddress} />
+                <br></br><br></br><br></br>
+                <div className="container">
+                    <h1>Ahoj.Tools</h1>
+                    <p>Admin Tools for Team Entropy... only!</p>
+                    <br />
+                    <button onClick={logout}>Logout</button>
+                </div>
                 <div id="creatingasset">
                     <Container>
                         <Card>
-                            <Card.Body><h1>Assets</h1><Button variant="link" onClick={CreateAsset}>+ create asset</Button></Card.Body>
+                            <Card.Body>
+                                <h1>Mint New Assets</h1>
+                                <p>PLEASE: Do not mint AHOJ Token!</p>
+                                <AssetForm handleSubmit={handleSubmit} />
+                            </Card.Body>
                         </Card>
-                        <Table striped bordered hover variant="dark">
-                            <thead>
-                                <tr>
-                                    <th>#</th>
-                                    <th>Asset ID</th>
-                                    <th>Name</th>
-                                    <th>Symbol</th>
-                                    <th>Total Supply</th>
-                                    <th><Button variant="outline-info">Reload</Button></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td>2wR5jFEHeECTQLbWWQr1fhJuj4FDNjGviCBRTamvGTqayVBDrC</td>
-                                    <td>TEcoin the coin of Team Entropy</td>
-                                    <td>TEEN</td>
-                                    <td>0.00</td>
-                                    <th>
-                                        <Button variant="outline-success" onClick={AssetAirdrop}>Send</Button>
-                                    </th>
-                                </tr>
-                                    <td>2</td>
-                                    <td>2J8rV9wPmsJJXHHzLf9aUiqWRC5LmHdN3dfuvNUvaYnoSr8pVe</td>
-                                    <td>Psycho Token</td>
-                                    <td>SIKO</td>
-                                    <td>0.00</td>
-                                    <th>
-                                        <Button variant="outline-success" onClick={AssetAirdrop}>Send</Button>
-                                    </th>
-                            </tbody>
-                        </Table>
+                        <Table4Assets assetData={assets} sendAsset={sendAsset}/>
                     </Container>
                 </div>
-            </main>
-        </div>
+                <div id="sendasset">
+                    <Container>
+                        <Card>
+                            <Card.Body>
+                                <h1>Send Asset</h1>
+                                <AVAXBalanceForm handleSubmit={handleSubmit} />
+                            </Card.Body>
+                        </Card>
+                    </Container>
+                </div>
+                <div id="getbalancecontract">
+                    <Container>
+                        <Card>
+                            <Card.Body>
+                                <h1>Get Balance of a Contract from C-Chain</h1>
+                                < GetContractBalanceFromCForm />
+                            </Card.Body>
+                        </Card>
+                    </Container>
+                </div>
+                <div id="getbalanceacount">
+                    <Container>
+                        <Card>
+                            <Card.Body>
+                                <h1>Get Balance of an Account</h1>
+                                < GetContractBalanceFromCForm />
+                            </Card.Body>
+                        </Card>
+                    </Container>
+                </div>
+            </div>
+        )}
+        </div>  
     );
 }
-
-export default App;

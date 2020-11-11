@@ -6,25 +6,26 @@ const AVA_PORT = process.env.REACT_APP_AVA_PORT || "9650";
 const AVA_PROTOCOL = process.env.REACT_APP_AVA_PROTOCOL || "http";
 const AVA_NETWORK_ID = process.env.REACT_APP_AVA_NETWORK_ID || "4";
 
-let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || 'jnUjZSRt16TcRnZzmh5aMhavwVHz3zBrSN8GfFMTQkzUnoBxC';
+let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || 'X'; //'2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm';
 
 const PK_X =  process.env.REACT_APP_PRIVATE_KEY_X; // The private key that holds the given assets to supply the faucet
 const PK_C =  process.env.REACT_APP_PRIVATE_KEY_C; // The private key that holds the given assets to supply the faucet
 const ASSET_ID = process.env.REACT_APP_ASSET_ID; // Which asset is being sent from the faucet
 const DROP_SIZE =  process.env.REACT_APP_DROP_SIZE_X || 1000; // how much of the given asset to transfer from the faucet
 const AVAX_FEE =  process.env.REACT_APP_AVAX_FEE || 1000000; // how much of the given asset to transfer from the faucet
+const AVA_RPC_URL = process.env.REACT_APP_AVA_RPC_URL || 'https://testapi.avax.network'; //'https://api.avax-test.network';  
 
-let bintools = avalanche.BinTools.getInstance();
+//const bintools = BinTools.getInstance(); 
+const bintools = avalanche.BinTools.getInstance();
 
-let ava = new avalanche.Avalanche(AVA_IP, parseInt(AVA_PORT), AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID);
+//const ava = new Avalanche(AVA_IP, parseInt(AVA_PORT), AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID); 
+const ava = new avalanche.Avalanche(AVA_IP, parseInt(AVA_PORT), AVA_PROTOCOL, parseInt(AVA_NETWORK_ID), AVA_CHAIN_ID);
 let xchain = ava.XChain();
-    xchain.setFee(new BN(AVAX_FEE));
-
+    xchain.setTxFee(new BN(AVAX_FEE)); //.setFee(new BN(AVAX_FEE));
 
 let myKeychain = xchain.keyChain();
 let keypair = myKeychain.importKey(PK_X);
-const FAUCET_ADDRESS = keypair.getAddressString();  //X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u
-
+const FAUCET_ADDRESS = keypair.getAddressString(); 
 
 const CONFIG = {
     AVA_IP: AVA_IP,
@@ -37,7 +38,8 @@ const CONFIG = {
     PK_C: PK_C,
     ASSET_ID: ASSET_ID,
     DROP_SIZE: DROP_SIZE,
-    FAUCET_ADDRESS: FAUCET_ADDRESS
+    FAUCET_ADDRESS: FAUCET_ADDRESS,
+    AVA_RPC_URL: AVA_RPC_URL
 };
 
 console.log(CONFIG);
@@ -45,7 +47,7 @@ console.log(CONFIG);
 function printXInfo(){
     xchain.getBalance(CONFIG.FAUCET_ADDRESS, CONFIG.ASSET_ID).then(res => {
         let balance =  res.balance;
-        let fee = xchain.getFee();
+        let fee = xchain.getTxFee(); //.getFee();
 
         console.log("(X) Faucet Address: ", FAUCET_ADDRESS)
         console.log("(X) Private Key: ", PK_X)
@@ -75,6 +77,6 @@ module.exports = {
     xchain,
     myKeychain,
     bintools,
-    BN,
-    CONFIG
+    CONFIG,
+    BN
 };
