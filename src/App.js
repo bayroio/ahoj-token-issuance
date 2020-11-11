@@ -257,7 +257,7 @@ export default function App() {
                 <MenuBar userEmail={userMetadata.email} avaxAddress={publicAddress} />
                 <br></br><br></br><br></br>
                 <div className="container">
-                    <h1>Ahoj.Carlinga</h1>
+                    <h1>Ahoj.Tools</h1>
                     <p>Admin Tools for Team Entropy... only!</p>
                     <br />
                     <button onClick={logout}>Logout</button>
