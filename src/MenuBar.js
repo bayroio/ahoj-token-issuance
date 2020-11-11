@@ -31,7 +31,7 @@ const MenuBar = (props) => {
                     </NavDropdown>
                 </Nav>
                 <Form inline>
-                    <Button type="submit">Logout</Button>
+                    <Button onClick={props.logout} type="submit">Logout</Button>
                 </Form>
                 </Nav>
             </Navbar.Collapse>
