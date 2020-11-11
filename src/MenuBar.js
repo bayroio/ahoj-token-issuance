@@ -6,7 +6,6 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import AhojFinanceLogo from './img/narwhal75x78.png'
 
-import { logout } from './App';
 //"X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u"
 
 const MenuBar = (props) => {
@@ -32,7 +31,7 @@ const MenuBar = (props) => {
                     </NavDropdown>
                 </Nav>
                 <Form inline>
-                    <Button type="submit">Logout</Button>
+                    <Button onClick={props.logout} type="submit">Logout</Button>
                 </Form>
                 </Nav>
             </Navbar.Collapse>

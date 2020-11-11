@@ -18,8 +18,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 const magic = new Magic('pk_test_F6F27951368B5DFD', {
     extensions: {
         xchain: new AvalancheExtension({
-            rpcUrl: "https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //'https://api.avax-test.network', //'https://testapi.avax.network',
-            chainId: "X", //CONFIG.AVA_CHAIN_ID, //'X',
+            rpcUrl: "https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //"https://api.avax-test.network", //"https://testapi.avax.network",
+            chainId: "X", //CONFIG.AVA_CHAIN_ID, //"X",
             networkId: 4 //4 //CONFIG.AVA_NETWORK_ID, //5, 4
         })
     }
@@ -202,23 +202,6 @@ export default function App() {
         setIsLoggedIn(false);
     };
 
-    /*constructor(props) {
-        super(props);
-        
-        this.initialState = {
-            assets: [],
-            // Internal Address: X-fuji10749uc4dqgvhasvyrd0urq2jcyrheyfe3aldq9
-            // External Address 0 with Balance: X-fuji1fd2h5ers2xffll2s7d9m0npn4wf0ghwfmmcuaf
-            // External Address 1: X-fuji1vpd7skm7q45rm5jey4me4ak40tunj3fshysfw6
-            // Derived AVAX Wallet Address: X-fuji1vpd7skm7q45rm5jey4me4ak40tunj3fshysfw6
-            avaxAddress: myKeychain.getAddressStrings(),//'X-fuji1fd2h5ers2xffll2s7d9m0npn4wf0ghwfmmcuaf',
-            modalShow: false,
-            setModalShow: false
-        };
-
-        this.state = this.initialState;
-    }*/
-
     const sendAsset = (asset) => {
         //const { assets } = this.state;
         console.log("asset: ", asset);
@@ -254,13 +237,13 @@ export default function App() {
             </div>
         ) : (
             <div>
-                <MenuBar userEmail={userMetadata.email} avaxAddress={publicAddress} />
+                <MenuBar userEmail={userMetadata.email} avaxAddress={publicAddress} logout={logout} />
                 <br></br><br></br><br></br>
                 <div className="container">
                     <h1>Ahoj.Tools</h1>
                     <p>Admin Tools for Team Entropy... only!</p>
-                    <br />
-                    <button onClick={logout}>Logout</button>
+                    {/* <br />
+                    <button onClick={logout}>Logout</button> */}
                 </div>
                 <div id="creatingasset">
                     <Container>
