@@ -3,7 +3,7 @@
 # ahoj-token-issuance
 This solution can be used to create and trade a variable-cap, fungible asset. You can specify which sets of addresses may mint more units. Also you can mint more units of an asset. You can check address balances and transfer shares.
 
-# Assets Faucet Address
+# EVEREST - Assets Faucet Address
 X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u
 
 # Assets
@@ -26,3 +26,12 @@ SYMBOL: SYKO
 AssetId: 2QDdn35MAaEUj8efLczdhycA8B4H7kHLh6Dyiu86Dtx1qgkQU7
 NAME: FourTwenty Token of The Waldos
 SYMBOL: FOTW
+
+
+# FUJI -  - Assets Faucet Address
+X-fuji1fd2h5ers2xffll2s7d9m0npn4wf0ghwfmmcuaf
+
+# Assets
+AssetId: WcNip9fVZMPSkXPzaYqZ9NZbJYhmN7Y3dgDuevWxHZw4YbjzD
+NAME: Kikicoin the intelligent coin
+SYMBOL: KIKI
