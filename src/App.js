@@ -221,7 +221,8 @@ export default function App() {
         <div className="App">
         {!isLoggedIn ? (
             <div className="container">
-                <h1>Ahoj Finance</h1>
+                <h1>Ahoj.Finance</h1>
+                <h3>Ahoj.Issuance</h3>
                 <hr/>
                 <h4><i>Please sign up or login</i></h4>
                 <input
@@ -240,7 +241,7 @@ export default function App() {
                 <MenuBar userEmail={userMetadata.email} avaxAddress={publicAddress} logout={logout} />
                 <br></br><br></br><br></br>
                 <div className="container">
-                    <h1>Ahoj.Tools</h1>
+                    <h1>Ahoj.Issuance</h1>
                     <p>Admin Tools for Team Entropy... only!</p>
                     {/* <br />
                     <button onClick={logout}>Logout</button> */}
@@ -262,7 +263,7 @@ export default function App() {
                         <Card>
                             <Card.Body>
                                 <h1>Send Asset</h1>
-                                <AVAXBalanceForm handleSubmit={handleSubmit} />
+                                <AVAXBalanceForm handleSubmit={handleSubmit} magic={magic} />
                             </Card.Body>
                         </Card>
                     </Container>
