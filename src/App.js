@@ -15,15 +15,17 @@ import GetContractBalanceFromCForm from './GetContractBalanceFromCForm'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const magic = new Magic('pk_test_F6F27951368B5DFD', {
+const magic = new Magic('pk_test_543B74B9A1E6B894'); //, {
+/*
     extensions: {
         xchain: new AvalancheExtension({
-            rpcUrl: "https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //"https://api.avax-test.network", //"https://testapi.avax.network",
+            rpcUrl: "http://localhost:9650", //"https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //"https://api.avax-test.network", //"https://testapi.avax.network",
             chainId: "X", //CONFIG.AVA_CHAIN_ID, //"X",
             networkId: 4 //4 //CONFIG.AVA_NETWORK_ID, //5, 4
         })
     }
 });
+*/
 
 async function CreateAsset(asset) {
     console.log("--- Creating Asset --- ", asset);
@@ -47,12 +49,13 @@ async function CreateAsset(asset) {
 
     let addresses = myKeychain.getAddresses();
     let addressStrings = myKeychain.getAddressStrings(); 
-    //console.log("addressStrings: ", addressStrings)
-    //console.log("addresses[0]: ", addresses[0])
+    console.log("addressStrings: ", addressStrings)
+    console.log("addresses[0]: ", addresses[0])
     let keypair = myKeychain.getKey(addresses[0])
-    //console.log("keypair: ", keypair)
-    //console.log("asset.totalsupply: ", asset.totalsupply);
+    console.log("keypair: ", keypair)
+    console.log("asset.totalsupply: ", asset.totalsupply);
 
+    /*
     // Create outputs for the asset's inistial state
     let secpOutput1 = new SECPTransferOutput(new BN(asset.totalsupply), addresses, new BN(asset.totalsupply), 1);
 
@@ -62,10 +65,10 @@ async function CreateAsset(asset) {
 
     // Fetch the UTXOSet for our addresses
     let utxos = await xchain.getUTXOs(addressStrings); //[0]);
-    //console.log("utoxs: ", utxos);
+    console.log("utoxs: ", utxos);
 
     // Make an unsigned Create Asset transaction from the data compiled earlier
-    //console.log("name: ", name)
+    console.log("name: ", name)
 
     //let unsigned = utxos.utxos.buildCreateAssetTx(5, xchain.getBlockchainID, addresses, addresses, initialState, name, symbol, denomination);
 
@@ -73,12 +76,12 @@ async function CreateAsset(asset) {
         utxos.utxos, addressStrings, addressStrings, initialState, 
         name, symbol, denomination
     );
-    //console.log("unsigned: ", unsigned);
+    console.log("unsigned: ", unsigned);
 
     //let signed = unsigned.sign(myKeychain)
     let signed = xchain.signTx(unsigned); //returns a Tx class
-    //console.log("signed: ", signed);
-    //console.log("tx signed: ", signed.toString());
+    console.log("signed: ", signed);
+    console.log("tx signed: ", signed.toString());
 
     // using the Tx class
     let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
@@ -87,21 +90,22 @@ async function CreateAsset(asset) {
     // using the transaction Buffer
     //let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
 
-    //console.log("utoxs: ", utxos.utxos.getAssetIDs());
+    console.log("utoxs: ", utxos.utxos.getAssetIDs());
 
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
     let status = await xchain.getTxStatus(txid); 
     //let Transaccion = await xchain.getTx(txid);
     let AVAXAssetID = xchain.AVAXAssetID;
 
-    //console.log("Status: ", status)
-    //console.log("Asset ID/TxID: ", txid)
-    //console.log("asset ID: ", assetID)
-    //console.log("Transaccion: ", Transaccion)
-    //console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
-    //console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
+    console.log("Status: ", status)
+    console.log("Asset ID/TxID: ", txid)
+    console.log("asset ID: ", assetID)
+    console.log("Transaccion: ", Transaccion)
+    console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
+    console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
 
     return(txid);
+    */
 }
 
 async function AssetAirdrop() {
@@ -171,21 +175,22 @@ export default function App() {
     const [userMetadata, setUserMetadata] = useState({});
     const [publicAddress, setPublicAddress] = useState("");
 
-    let address = myKeychain.getAddressStrings()
-    console.log("address: ", address)
-    const [avaxAddress, setAvaxAddress] = useState(address);
+    //let address = myKeychain.getAddressStrings()
+    //console.log("address: ", address)
+    //const [avaxAddress, setAvaxAddress] = useState(address);
 
+    /*
     console.log("CONFIG.AVA_RPC_URL : ", CONFIG.AVA_RPC_URL);
     console.log("CONFIG.AVA_CHAIN_ID : ", CONFIG.AVA_CHAIN_ID);
     console.log("CONFIG.AVA_NETWORK_ID : ", CONFIG.AVA_NETWORK_ID);
-
+    */
 
     useEffect(() => {
         magic.user.isLoggedIn().then(async (magicIsLoggedIn) => {
         setIsLoggedIn(magicIsLoggedIn);
         if (magicIsLoggedIn) {
             const metadata = await magic.user.getMetadata();
-            console.log(metadata)
+            console.log("Metadata: ", metadata)
             setPublicAddress(metadata.publicAddress);
             setUserMetadata(metadata);
         }
@@ -193,7 +198,8 @@ export default function App() {
     }, [isLoggedIn]);
 
     const login = async () => {
-        await magic.auth.loginWithMagicLink({ email });
+        let DID_Token = await magic.auth.loginWithMagicLink({ email });
+        console.log("DID Token ", DID_Token)
         setIsLoggedIn(true);
     };
 
@@ -207,7 +213,7 @@ export default function App() {
         console.log("asset: ", asset);
     };
 
-    const handleSubmit = async (asset) => {
+    const handleSubmitAssetForm = async (asset) => {
         console.log("Valores: ", asset);
         let txId = await CreateAsset(asset);
         console.log("txID: ", txId);
@@ -252,7 +258,7 @@ export default function App() {
                             <Card.Body>
                                 <h1>Mint New Assets</h1>
                                 <p>PLEASE: Do not mint AHOJ Token!</p>
-                                <AssetForm handleSubmit={handleSubmit} />
+                                <AssetForm handleSubmitAssetForm={handleSubmitAssetForm} />
                             </Card.Body>
                         </Card>
                         <Table4Assets assetData={assets} sendAsset={sendAsset}/>
@@ -263,7 +269,7 @@ export default function App() {
                         <Card>
                             <Card.Body>
                                 <h1>Send Asset</h1>
-                                <AVAXBalanceForm handleSubmit={handleSubmit} magic={magic} />
+                                <AVAXBalanceForm magic={magic} />
                             </Card.Body>
                         </Card>
                     </Container>

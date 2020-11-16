@@ -6,14 +6,14 @@ const AVA_PORT = process.env.REACT_APP_AVA_PORT || "9650";
 const AVA_PROTOCOL = process.env.REACT_APP_AVA_PROTOCOL || "http";
 const AVA_NETWORK_ID = process.env.REACT_APP_AVA_NETWORK_ID || "4";
 
-let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || 'X'; //'2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm';
+let AVA_CHAIN_ID = process.env.REACT_APP_AVA_CHAIN_ID || "X"; //'2JVSBoinj9C2J33VntvzYtVJNZdN2NKiwwKjcumHUWEb5DbBrm';
 
 const PK_X =  process.env.REACT_APP_PRIVATE_KEY_X; // The private key that holds the given assets to supply the faucet
 const PK_C =  process.env.REACT_APP_PRIVATE_KEY_C; // The private key that holds the given assets to supply the faucet
 const ASSET_ID = process.env.REACT_APP_ASSET_ID; // Which asset is being sent from the faucet
 const DROP_SIZE =  process.env.REACT_APP_DROP_SIZE_X || 1000; // how much of the given asset to transfer from the faucet
 const AVAX_FEE =  process.env.REACT_APP_AVAX_FEE || 1000000; // how much of the given asset to transfer from the faucet
-const AVA_RPC_URL = process.env.REACT_APP_AVA_RPC_URL || 'https://testapi.avax.network'; //'https://api.avax-test.network';  
+const AVA_RPC_URL = process.env.REACT_APP_AVA_RPC_URL || "https://api.avax-test.network" //"https://testapi.avax.network"; //"https://api.avax-test.network";  
 
 //const bintools = BinTools.getInstance(); 
 const bintools = avalanche.BinTools.getInstance();
@@ -42,7 +42,7 @@ const CONFIG = {
     AVA_RPC_URL: AVA_RPC_URL
 };
 
-console.log(CONFIG);
+//console.log(CONFIG);
 
 function printXInfo(){
     xchain.getBalance(CONFIG.FAUCET_ADDRESS, CONFIG.ASSET_ID).then(res => {
@@ -56,17 +56,17 @@ function printXInfo(){
         console.log(`(X) Tx Fee: ${fee.toString()}`)
     });
 }
-printXInfo();
+//printXInfo();
 
 async function checkAssetId(){
     if(!CONFIG.ASSET_ID){
         let res = await xchain.getAssetDescription('AVA');
         CONFIG.ASSET_ID = bintools.cb58Encode(res.assetID);
-        console.log("Updated Asset Id: ",CONFIG.ASSET_ID);
+        //console.log("Updated Asset Id: ",CONFIG.ASSET_ID);
     }else{
         let res = await xchain.getAssetDescription(CONFIG.ASSET_ID);
         CONFIG.ASSET_ID = bintools.cb58Encode(res.assetID);
-        console.log("Updated Asset Id: ",CONFIG.ASSET_ID);
+        //console.log("Updated Asset Id: ",CONFIG.ASSET_ID);
     }
 }
 checkAssetId();
