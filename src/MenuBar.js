@@ -6,15 +6,19 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import AhojFinanceLogo from './img/narwhal75x78.png'
 
-//"X-everest15z9krm5kfsy4vagstfxg9va2qykzgvw806gu8u"
-
 const MenuBar = (props) => {
     const { userEmail, avaxAddress } = props;
 
+    const onFormSubmit = (event) => {
+        event.preventDefault();
+        props.logout();
+    }
+
     return (
         <Navbar fixed="top" collapseOnSelect expand="md" bg="light" variant="light">
-            <Navbar.Brand href="#creatingasset"><img src={AhojFinanceLogo} width="40" height="40" className="d-inline-block align-top" alt="Ahoj Finance logo"
-      /></Navbar.Brand>
+            <Navbar.Brand href="#creatingasset">
+                <img src={AhojFinanceLogo} width="40" height="40" className="d-inline-block align-top" alt="Ahoj Finance logo"/>
+            </Navbar.Brand>
             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
             <Navbar.Collapse id="responsive-navbar-nav">
                 <Nav className="justify-content-between"> 
@@ -30,8 +34,8 @@ const MenuBar = (props) => {
                         <NavDropdown.Item>AVAX: 40</NavDropdown.Item>
                     </NavDropdown>
                 </Nav>
-                <Form inline>
-                    <Button onClick={props.logout} type="submit">Logout</Button>
+                <Form inline onClick={onFormSubmit}>
+                    <Button variant="primary" type="submit">Logout</Button>
                 </Form>
                 </Nav>
             </Navbar.Collapse>

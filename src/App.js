@@ -1,11 +1,11 @@
-import React, {Component, useState, useEffect}  from 'react';
+import React, { useState, useEffect }  from 'react';
 import Container from 'react-bootstrap/Container'
 import Card from 'react-bootstrap/Card'
-import {xchain, myKeychain, bintools, BN, CONFIG} from './server/ava'
-import {InitialStates, SECPTransferOutput} from 'avalanche/dist/apis/avm'
+import { avm, keyStore, xKeychain, BN } from './server/ava'
+//import { InitialStates, SECPTransferOutput } from 'avalanche/dist/apis/avm'
 
 import { Magic } from "magic-sdk";
-import { AvalancheExtension } from "@magic-ext/avalanche";
+//import { AvalancheExtension } from "@magic-ext/avalanche";
 
 import Table4Assets from './Table4Assets';
 import MenuBar from './MenuBar';
@@ -15,15 +15,7 @@ import GetContractBalanceFromCForm from './GetContractBalanceFromCForm'
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const magic = new Magic('pk_test_F6F27951368B5DFD', {
-    extensions: {
-        xchain: new AvalancheExtension({
-            rpcUrl: "https://api.avax-test.network", //"https://testapi.avax.network", //CONFIG.AVA_RPC_URL, //"https://api.avax-test.network", //"https://testapi.avax.network",
-            chainId: "X", //CONFIG.AVA_CHAIN_ID, //"X",
-            networkId: 4 //4 //CONFIG.AVA_NETWORK_ID, //5, 4
-        })
-    }
-});
+const magic = new Magic('pk_test_F4B7DB2E256635A0');
 
 async function CreateAsset(asset) {
     console.log("--- Creating Asset --- ", asset);
@@ -35,24 +27,25 @@ async function CreateAsset(asset) {
     let denomination = 9;
 
     /*
-    let addresses = myKeychain.getAddresses();
+    let addresses = xKeychain.getAddresses();
     let initialHolders = [{"address": addresses[0], "amount": "1000000000000000"}]; //asset.totalsupply}];
     let assetID = xchain.createFixedCapAsset("eherrador", "LFMOxto24", name, symbol, denomination, initialHolders);
     console.log("asset ID: ", assetID)
     return(assetID);
     */
 
-    //myKeychain.makeKey();
-    //myKeychain.makeKey();
+    //xKeychain.makeKey();
+    //xKeychain.makeKey();
 
-    let addresses = myKeychain.getAddresses();
-    let addressStrings = myKeychain.getAddressStrings(); 
-    //console.log("addressStrings: ", addressStrings)
-    //console.log("addresses[0]: ", addresses[0])
-    let keypair = myKeychain.getKey(addresses[0])
-    //console.log("keypair: ", keypair)
-    //console.log("asset.totalsupply: ", asset.totalsupply);
+    let addresses = xKeychain.getAddresses();
+    let addressStrings = xKeychain.getAddressStrings(); 
+    console.log("addressStrings: ", addressStrings)
+    console.log("addresses[0]: ", addresses[0])
+    let keypair = xKeychain.getKey(addresses[0])
+    console.log("keypair: ", keypair)
+    console.log("asset.totalsupply: ", asset.totalsupply);
 
+    /*
     // Create outputs for the asset's inistial state
     let secpOutput1 = new SECPTransferOutput(new BN(asset.totalsupply), addresses, new BN(asset.totalsupply), 1);
 
@@ -62,10 +55,10 @@ async function CreateAsset(asset) {
 
     // Fetch the UTXOSet for our addresses
     let utxos = await xchain.getUTXOs(addressStrings); //[0]);
-    //console.log("utoxs: ", utxos);
+    console.log("utoxs: ", utxos);
 
     // Make an unsigned Create Asset transaction from the data compiled earlier
-    //console.log("name: ", name)
+    console.log("name: ", name)
 
     //let unsigned = utxos.utxos.buildCreateAssetTx(5, xchain.getBlockchainID, addresses, addresses, initialState, name, symbol, denomination);
 
@@ -73,12 +66,12 @@ async function CreateAsset(asset) {
         utxos.utxos, addressStrings, addressStrings, initialState, 
         name, symbol, denomination
     );
-    //console.log("unsigned: ", unsigned);
+    console.log("unsigned: ", unsigned);
 
-    //let signed = unsigned.sign(myKeychain)
+    //let signed = unsigned.sign(xKeychain)
     let signed = xchain.signTx(unsigned); //returns a Tx class
-    //console.log("signed: ", signed);
-    //console.log("tx signed: ", signed.toString());
+    console.log("signed: ", signed);
+    console.log("tx signed: ", signed.toString());
 
     // using the Tx class
     let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
@@ -87,33 +80,34 @@ async function CreateAsset(asset) {
     // using the transaction Buffer
     //let txid = await xchain.issueTx(signed.toBuffer()); //returns an Avalanche serialized string for the TxID
 
-    //console.log("utoxs: ", utxos.utxos.getAssetIDs());
+    console.log("utoxs: ", utxos.utxos.getAssetIDs());
 
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
     let status = await xchain.getTxStatus(txid); 
     //let Transaccion = await xchain.getTx(txid);
     let AVAXAssetID = xchain.AVAXAssetID;
 
-    //console.log("Status: ", status)
-    //console.log("Asset ID/TxID: ", txid)
-    //console.log("asset ID: ", assetID)
-    //console.log("Transaccion: ", Transaccion)
-    //console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
-    //console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
+    console.log("Status: ", status)
+    console.log("Asset ID/TxID: ", txid)
+    console.log("asset ID: ", assetID)
+    console.log("Transaccion: ", Transaccion)
+    console.log("AVAX Asset ID - Buffer: ", AVAXAssetID)
+    console.log("AVAX Asset ID - String: ", bintools.cb58Encode(AVAXAssetID))
 
     return(txid);
+    */
 }
 
 async function AssetAirdrop() {
     console.log("--- Asset Airdrop ---");
 
-    let addresses = myKeychain.getAddresses();
-    let addressStrings = myKeychain.getAddressStrings(); 
+    let addresses = xKeychain.getAddresses();
+    let addressStrings = xKeychain.getAddressStrings(); 
 
     let assetid = "2qoA17geKM6D8oFwaZzRgQ4bE2sthDxhQJ8ZE7sjRC6BRJ7bDh"; //avaSerialized string
 
     // Fetch the UTXOSet for our addresses
-    let utxos = await xchain.getUTXOs(addresses);
+    let utxos = await avm.getUTXOs(addresses);
     let mybalance = utxos.getBalance(addresses, assetid);
 
     let sendAmount = new BN(5); //amounts are in BN format
@@ -128,18 +122,18 @@ async function AssetAirdrop() {
     //   * An array of addresses any leftover funds are sent
     //   * The AssetID of the funds being sent
     console.log("1");
-    let unsignedTx = await xchain.buildBaseTx(utxos, sendAmount, assetid, [friendsAddress], addressStrings, addressStrings);
+    let unsignedTx = await avm.buildBaseTx(utxos, sendAmount, assetid, [friendsAddress], addressStrings, addressStrings);
     console.log("2");
-    let signedTx = xchain.signTx(unsignedTx);
+    let signedTx = avm.signTx(unsignedTx);
     console.log("3");
-    let txid = await xchain.issueTx(signedTx);
+    let txid = await avm.issueTx(signedTx);
     console.log("4");
 
     // returns one of: "Accepted", "Processing", "Unknown", and "Rejected"
-    let status = await xchain.getTxStatus(txid);
+    let status = await avm.getTxStatus(txid);
     console.log("status Tx: ", status)
     console.log("5");
-    let updatedUTXOs = await xchain.getUTXOs(addresses);
+    let updatedUTXOs = await avm.getUTXOs(addresses);
     console.log("6");
     let newBalance = utxos.getBalance(addresses, assetid);
     console.log("7");
@@ -151,13 +145,13 @@ async function AssetAirdrop() {
 async function CheckBalance() {
     console.log("--- Check Balance ---")
 
-    let addresses = myKeychain.getAddresses();
-    let addressStrings = myKeychain.getAddressStrings();
+    let addresses = xKeychain.getAddresses();
+    let addressStrings = xKeychain.getAddressStrings();
     
     let assetid = "2qoA17geKM6D8oFwaZzRgQ4bE2sthDxhQJ8ZE7sjRC6BRJ7bDh"; //avaSerialized string
 
     // Fetch the UTXOSet for our addresses
-    let utxos = await xchain.getUTXOs(addresses);
+    let utxos = await avm.getUTXOs(addresses);
 
     let mybalance = utxos.getBalance(addresses, assetid);
     console.log("Address ", addressStrings[0], " balance: ", mybalance.toNumber())
@@ -170,30 +164,27 @@ export default function App() {
     const [assets, setAssets] = useState([]);
     const [userMetadata, setUserMetadata] = useState({});
     const [publicAddress, setPublicAddress] = useState("");
-
-    let address = myKeychain.getAddressStrings()
-    console.log("address: ", address)
-    const [avaxAddress, setAvaxAddress] = useState(address);
-
-    console.log("CONFIG.AVA_RPC_URL : ", CONFIG.AVA_RPC_URL);
-    console.log("CONFIG.AVA_CHAIN_ID : ", CONFIG.AVA_CHAIN_ID);
-    console.log("CONFIG.AVA_NETWORK_ID : ", CONFIG.AVA_NETWORK_ID);
-
+    const [userName, setUserName] = useState("");
+    const [password, setPassword] = useState("");
 
     useEffect(() => {
         magic.user.isLoggedIn().then(async (magicIsLoggedIn) => {
         setIsLoggedIn(magicIsLoggedIn);
         if (magicIsLoggedIn) {
-            const metadata = await magic.user.getMetadata();
-            console.log(metadata)
-            setPublicAddress(metadata.publicAddress);
-            setUserMetadata(metadata);
+            const metadata = await magic.user.getMetadata()
+            console.log("Metadata: ", metadata)
+            setEmail(metadata.email)
+            //setPublicAddress(metadata.publicAddress);
+            //setUserMetadata(metadata);
         }
         });
-    }, [isLoggedIn]);
+    }, [isLoggedIn, userName, password]);
 
     const login = async () => {
-        await magic.auth.loginWithMagicLink({ email });
+        let DID_Token = await magic.auth.loginWithMagicLink({ email });
+        console.log("DID Token ", DID_Token)
+        //llamar al api de wallet en el server y pasarle el DID_Token
+        //https://3001-fe77f40d-cd5e-45d8-84a7-63e44a6567c1.ws-us02.gitpod.io/api/wallet/getAddress
         setIsLoggedIn(true);
     };
 
@@ -207,7 +198,7 @@ export default function App() {
         console.log("asset: ", asset);
     };
 
-    const handleSubmit = async (asset) => {
+    const handleSubmitAssetForm = async (asset) => {
         console.log("Valores: ", asset);
         let txId = await CreateAsset(asset);
         console.log("txID: ", txId);
@@ -221,7 +212,8 @@ export default function App() {
         <div className="App">
         {!isLoggedIn ? (
             <div className="container">
-                <h1>Ahoj Finance</h1>
+                <h1>Ahoj.Finance</h1>
+                <h3>Ahoj.Issuance</h3>
                 <hr/>
                 <h4><i>Please sign up or login</i></h4>
                 <input
@@ -230,7 +222,7 @@ export default function App() {
                     required="required"
                     placeholder="Enter your email"
                     onChange={(event) => {
-                    setEmail(event.target.value);
+                        setEmail(event.target.value);
                     }}
                 />
                 <button onClick={login}>Send</button>
@@ -240,7 +232,7 @@ export default function App() {
                 <MenuBar userEmail={userMetadata.email} avaxAddress={publicAddress} logout={logout} />
                 <br></br><br></br><br></br>
                 <div className="container">
-                    <h1>Ahoj.Tools</h1>
+                    <h1>Ahoj.Issuance</h1>
                     <p>Admin Tools for Team Entropy... only!</p>
                     {/* <br />
                     <button onClick={logout}>Logout</button> */}
@@ -251,7 +243,7 @@ export default function App() {
                             <Card.Body>
                                 <h1>Mint New Assets</h1>
                                 <p>PLEASE: Do not mint AHOJ Token!</p>
-                                <AssetForm handleSubmit={handleSubmit} />
+                                <AssetForm handleSubmitAssetForm={handleSubmitAssetForm} />
                             </Card.Body>
                         </Card>
                         <Table4Assets assetData={assets} sendAsset={sendAsset}/>
@@ -262,7 +254,7 @@ export default function App() {
                         <Card>
                             <Card.Body>
                                 <h1>Send Asset</h1>
-                                <AVAXBalanceForm handleSubmit={handleSubmit} />
+                                <AVAXBalanceForm magic={magic} />
                             </Card.Body>
                         </Card>
                     </Container>

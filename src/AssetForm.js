@@ -8,7 +8,7 @@ class AssetForm extends Component {
         super(props);
         
         this.initialState = {
-            assetid:'',
+            //assetid:'',
             name: '',
             symbol: '',
             totalsupply: ''
@@ -28,7 +28,7 @@ class AssetForm extends Component {
     onFormSubmit = (event) => {
         event.preventDefault();
         
-        this.props.handleSubmit(this.state);
+        this.props.handleSubmitAssetForm(this.state);
         this.setState(this.initialState);
     }
 
